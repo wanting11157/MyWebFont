@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>用户列表</title>
+		<!-- 外部样式表 -->
+		<link rel="stylesheet" href="../../iframe/dist/css/layui.css" />
+		
+	</head>
+	<body>
+	<div style="width: 80%;margin-left: auto;margin-right: auto;margin-top: 50px;">
+		
+	<form class="layui-form" action="">
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">姓名</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="name"    placeholder="请输入姓名" autocomplete="off" class="layui-input">
+	    </div>
+	  </div>
+	  
+	  <div class="layui-form-item">
+	    <div class="layui-input-block">
+	      <button class="layui-btn" lay-submit lay-filter="search">查询</button>
+	      
+	    </div>
+	  </div>
+	</form>
+	 
+	 </div>
+	 <!-- -------------------------------------------->
+	 <table id="user" lay-filter="test"></table>
+	 
+	 
+	<script src="../../iframe/dist/layui.all.js"></script>
+	<script>
+	//Demo
+	layui.use(['form','jquery','table'], function(){
+	  var form = layui.form;
+	  var $ = layui.jquery;
+	  var table = layui.table;
+	  
+	  //监听提交
+	  form.on('submit(search)', function(data){
+	    var formData = data.field;
+		formData.page = 1;
+		formData.rows = 30;
+		
+		
+		
+		$.ajax({
+			url:'/api/user/search',
+			data:formData,
+			type:'POST',
+			success:function(res){
+			
+				if(res && res.code == 200){
+					layer.msg("查询成功");
+					
+					table.render({
+						elem:'#user',
+					  height: 300,
+					  data:res.data,
+					  cols:  [[ //标题栏
+					      {checkbox: true}
+					      ,{field: 'id', title: 'ID', width: 80}
+					      ,{field: 'name', title: '用户名', width: 120}
+					      ,{field: 'sex', title: '性别', width: 120}
+					      ,{field: '', title: '操作', width: 320,templet:function(user){ 
+							  console.log(JSON.stringify(user));
+							  return '<a target="_blank" href="./update.html?id='+user.id+'">修改</a> '+' &nbsp; <a href="javascript:void(0);" onclick="delUser('+user.id+')">删除</a>';}
+						 }
+					    ]]
+					});
+					
+				}else{
+					layer.msg("查询失败");
+				}
+				
+				
+				
+			},
+			error:function(){
+				layer.msg("查询异常");
+			}
+		});
+		
+		
+		
+	    return false;
+	  });
+	 
+	});
+	
+	
+	function delUser(id){
+			  $.ajax({
+			  	url:'/api/user/del',
+			  	data:{id:id},
+			  	type:'POST',
+			  	success:function(res){
+					console.log(JSON.stringify(res));
+				},
+				error:function(){
+					layer.msg("查询异常");
+				}
+			});
+	}
+	</script>
+	</body>
+</html>

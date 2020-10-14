@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>增加成绩</title>
+		<link rel="stylesheet" href="../../iframe/dist/css/layui.css" />
+		
+	</head>
+	<body>
+		<div style="width: 80%;margin-left: auto;margin-right: auto;margin-top: 50px;">
+		
+	<form class="layui-form" >
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">姓名</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="name" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+	    </div>
+	  </div>
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">学号</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="haoma" required  lay-verify="required" placeholder="请输入学号" autocomplete="off" class="layui-input">
+	    </div>
+	  </div>
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">专业</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="major" required  lay-verify="required" placeholder="请输入专业" autocomplete="off" class="layui-input">
+	    </div>
+	  </div>
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">性别</label>
+	    <div class="layui-input-block">
+			
+			<input type="radio" name="sex" value="0" title="男">
+			<input type="radio" name="sex" value="1" title="女" checked>
+				
+	    </div>
+	  </div>
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">院系</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="college" required  lay-verify="required" placeholder="请输入院系" autocomplete="off" class="layui-input">
+	    </div>
+	  </div>
+	  <!-- private int id;
+    private int courseId;
+    private int score;
+    private int studentId;-->
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">密码框</label>
+	    <div class="layui-input-inline">
+	      <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+	    </div>
+	    <div class="layui-form-mid layui-word-aux">辅助文字</div>
+	  </div>
+	  
+	  
+	 
+	  <div class="layui-form-item layui-form-text">
+	    <label class="layui-form-label">备注</label>
+	    <div class="layui-input-block">
+	      <textarea name="remark" placeholder="请输入内容" class="layui-textarea"></textarea>
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <div class="layui-input-block">
+	      <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+	      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+	    </div>
+	  </div>
+	</form>
+	 
+	 </div>
+	 <select lay-fileter="slectUser">
+		 <option value="400">aaa</option>
+	 </select>
+	 
+	 <select lay-fileter="slectUser2">
+	 		 <option value="400">aaa</option>
+	 </select>
+	 
+	 
+	<script src="../../iframe/dist/layui.all.js"></script>
+	<script>
+	//Demo
+	layui.use(['form','jquery'], function(){
+		
+	  var form = layui.form;
+	  var $ = layui.jquery;
+	  
+	  //监听提交
+	  
+		  
+	  form.on('submit(formDemo)', function(data){
+	    layer.msg(JSON.stringify(data.field));
+		
+		$.ajax({
+			url:'/api/user/add',
+			data:data.field,
+			type:'POST',
+			success:function(res){
+				layer.msg(res);
+				if(res && res.code == 200){
+					layer.msg("注册成功");
+					
+				}else{
+					layer.msg("注册失败");
+				}
+				
+			},
+			error:function(){
+				layer.msg("注册异常");
+			}
+		})
+		
+		
+		
+	    return false;
+	  });
+	});
+	</script>
+	</body>
+</html>

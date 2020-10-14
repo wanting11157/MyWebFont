@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script>
+			
+			
+			$(functiono(){
+				// 页面加载完成后回调执行
+			
+			
+			
+			
+			})
+			</script>
+		<meta charset="utf-8">
+		<title>原生新增</title>
+		<style>
+			form{
+				
+			}
+			.major{
+				
+			}
+			
+		</style>
+	</head>
+	<body>
+		
+		<form  action="/api/user/add" method="post" onsubmit="" onclick="return false;">
+			用户名：<input id="name" name="name" /><br>
+			学号：<input id="haoma" name="haoma" /><br>
+			专业：<input id="major" class="major" name="major" /><br>
+			院系：<input id="college" name="college" /><br>
+			性别：男<input type="radio" name="sex" value="0" /> 女<input type="radio" name="sex" value="1"/><br>
+			<input type="submit"  onclick="" value="提交" />
+		</form>
+		
+		<script src="../../iframe/dist/lay/modules/jquery.js"></script>
+		<script>
+			
+			
+			$(functiono(){
+				// 页面加载完成后回调执行
+			
+			
+			
+			
+			})
+			
+			
+			
+			
+			
+			var name = $("input[name='sex']:checked").val()
+			var name = $("input[name='name']").val()
+			var name = $("#name").val()
+			var major = $(".major").val()
+			
+			
+			user ;
+			$("input[name='name']").val(user.name)
+			
+			var url = '';
+			var submitData = {name:'zhc',person:{age:12}};
+			$.ajax({
+				url:url,
+				data:submitData,
+				type:"POST",
+				//async:false,
+				//contentType:"application/json;charset=utf-8",
+				//dataType:"json",
+				succcess:function(res){
+					console.log(JSON.stringify(res))
+				},
+				error:function(){
+					
+				}
+			})
+			
+		</script>
+	</body>
+</html>
