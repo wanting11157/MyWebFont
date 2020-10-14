@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>课程更新</title>
+		<link rel="stylesheet" href="../../iframe/dist/css/layui.css" />
+		
+	</head>
+	<body>
+		<div style="width: 80%;margin-left: auto;margin-right: auto;margin-top: 50px;">
+		
+	<form class="layui-form" action="" lay-filter="userFilter">
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">课程id</label>
+	    <div class="layui-input-block">
+	      <input type="int" name="id" required  lay-verify="required" readonly="readonly" autocomplete="on" class="layui-input">
+	    </div>
+	  </div>
+	  
+	  <div class="layui-form-item">
+	     <label class="layui-form-label">课程名</label>
+	     <div class="layui-input-block">
+	       <input type="text" name="name" required  lay-verify="required" placeholder="请输入课程的名字" autocomplete="off" class="layui-input">
+	     </div>
+	   </div>
+	   
+	   <div class="layui-form-item">
+	     <label class="layui-form-label">教师姓名</label>
+	     <div class="layui-input-block">
+	       <input type="text" name="teacherName" required  lay-verify="required" placeholder="请输入教师姓名" autocomplete="off" class="layui-input">
+	     </div>
+	   </div>
+	   
+	   <div class="layui-form-item">
+	     <label class="layui-form-label">院系</label>
+	     <div class="layui-input-block">
+	       <input type="text" name="college" required  lay-verify="required" placeholder="请输入院系(这是哪个院系开的课)" autocomplete="off" class="layui-input">
+	     </div>
+	   </div>
+	   
+	   <div class="layui-form-item">
+	     <label class="layui-form-label">学期</label>
+	     <div class="layui-input-block">
+	  			<input type="text" name="team" required  lay-verify="required" placeholder="请输入学期(这是哪个学期的课)" autocomplete="off" class="layui-input">
+	  				
+	     </div>
+	   </div>
+	   
+	  <!-- 
+	  private int id;
+	      private String name;
+	      private int teacherId;
+	      private String teacherName;
+	      private String college;
+	      private String team;-->
+	  
+	  
+	 
+	  <div class="layui-form-item layui-form-text">
+	    <label class="layui-form-label">备注</label>
+	    <div class="layui-input-block">
+	      <textarea name="remark" placeholder="请输入内容" class="layui-textarea"></textarea>
+	    </div>
+	  </div>
+	  <div class="layui-form-item">
+	    <div class="layui-input-block">
+	      <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+	      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+	    </div>
+	  </div>
+	</form>
+	 
+	 </div>
+	 
+	 
+	<script src="../../iframe/dist/layui.all.js"></script>
+	<script>
+	//Demo
+	layui.use(['form','jquery'], function(){
+	  var form = layui.form;
+	  var $ = layui.jquery;
+	  
+	  var myid = location.href.split("=")[1];
+	  if(!myid){
+		layer.msg("您没有输入要更新的那个课程的id");
+		return false;
+		}
+	  var submitData = {id:myid};
+	  
+	  
+	  //查用户
+	  $.ajax({
+	  	url:'/api/course/getById',
+	  	data:submitData,
+	  	type:'POST',
+	  	success:function(res){
+	  		layer.msg(JSON.stringify(res));
+			
+			
+			// res = ResponseResult
+	  		if(res && res.code == 200){
+	  			layer.msg("显示课程信息成功");
+				var user = res.data;
+	  			//给表单赋值
+	  			form.val("userFilter", user);
+	  		}else{
+	  			layer.msg("显示课程信息失败");
+	  		}
+	  		
+	  	},
+	  	error:function(){
+			
+	  		layer.msg("显示课程信息异常");
+	  	}
+	  })
+	  
+	  
+	  //监听提交
+	  form.on('submit(formDemo)', function(data){
+	    layer.msg(JSON.stringify(data.field));
+		
+		$.ajax({
+			url:'/api/course/update',
+			data:data.field,
+			type:'POST',
+			success:function(res){
+				// layer.msg(res);
+				if(res && res.code == 200){
+					layer.msg("更新成功");
+					
+				}else{
+					layer.msg("更新失败");
+				}
+				
+			},
+			error:function(){
+				layer.msg("更新异常");
+			}
+		})
+		
+		
+		
+	      return false;
+	  });
+	});
+	</script>
+	</body>
+</html>
