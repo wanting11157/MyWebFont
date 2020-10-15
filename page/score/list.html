@@ -49,7 +49,7 @@
 		
 		
 		$.ajax({
-			url:'/api/course/search',
+			url:'/api/score/search',
 			data:formData,
 			type:'POST',
 			success:function(res){
@@ -58,14 +58,13 @@
 					layer.msg("查询成功");
 					
 					/* id
-name
-teacher_id
-teacher_name
-college
-team
+course_id
+score
+student_id
 create_time
 update_time
 remark
+
 
 					 */
 					table.render({
@@ -75,17 +74,15 @@ remark
 					  cols:  [[ //标题栏
 					      {checkbox: true}
 					      ,{field: 'id', title: 'ID', width: 80}
-					      ,{field: 'name', title: '课程名', width: 120}
-					      ,{field: 'teacherId', title: '教师id', width: 120}
-						  ,{field: 'teacherName', title: '教师姓名', width: 120}
-						  ,{field: 'college', title: '院系', width: 120}
-						  ,{field: 'team', title: '学期', width: 120}
+					      ,{field: 'courseId', title: '课程id', width: 120}
+					      ,{field: 'score', title: '成绩', width: 120}
+						  ,{field: 'studentId', title: '学生id', width: 120}
 						  ,{field: 'updateTime', title: '更新时间', width: 120}
 						  ,{field: 'createTime', title: '创建时间', width: 120}
 						  ,{field: 'remark', title: '备份', width: 120}
-					      ,{field: '', title: '操作', width: 320,templet:function(course){ 
-							  console.log(JSON.stringify(course));
-							  return '<a target="_blank" href="./update.html?id='+course.id+'">修改</a> '+' &nbsp; <a href="javascript:void(0);" onclick="delUser('+course.id+')">删除</a>';}
+					      ,{field: '', title: '操作', width: 320,templet:function(score){ 
+							  console.log(JSON.stringify(score));
+							  return '<a target="_blank" href="./update.html?id='+score.id+'">修改</a> '+' &nbsp; <a href="javascript:void(0);" onclick="delUser('+score.id+')">删除</a>';}
 						 }
 					    ]]
 					});
@@ -109,7 +106,7 @@ remark
 	  
 	  function delUser(id){
 	  		  $.ajax({
-	  		  	url:'/api/course/del',
+	  		  	url:'/api/score/del',
 	  		  	data:{id:id},
 	  		  	type:'POST',
 	  		  	success:function(res){

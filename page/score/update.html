@@ -2,14 +2,28 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>增加成绩</title>
+		<title>更新成绩</title>
 		<link rel="stylesheet" href="../../iframe/dist/css/layui.css" />
 		
 	</head>
 	<body>
 		<div style="width: 80%;margin-left: auto;margin-right: auto;margin-top: 50px;">
 		
-	<form class="layui-form" >
+	<form class="layui-form" lay-filter="userFilter">
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">课程id</label>
+	    <div class="layui-input-block">
+	      <input type="int" name="courseId" required  lay-verify="required" readonly="readonly" autocomplete="on" class="layui-input">
+	    </div>
+	  </div>
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">学生id</label>
+	    <div class="layui-input-block">
+	      <input type="int" name="studentId" required  lay-verify="required" readonly="readonly" autocomplete="on" class="layui-input">
+	    </div>
+	  </div>
 	  
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">成绩</label>
@@ -38,16 +52,14 @@
 	 
 	 
 	<script src="../../iframe/dist/layui.all.js"></script>
+	
 	<script>
 	//Demo
 	layui.use(['form','jquery'], function(){
-		
 	  var form = layui.form;
 	  var $ = layui.jquery;
 	  
-	  
-	    
-	   var courseId = location.href.split("=")[1];
+	  var courseId = location.href.split("=")[1];
 	   courseId = courseId.substr(0, 1);
 	   if(!courseId){
 	  layer.msg("您没有输入要增加成绩的那个课程的id");
@@ -65,39 +77,64 @@
 	  submitData.studentId=studentId;
 	  
 	  
-	    
+	  
+	  //查用户
+	  $.ajax({
+	  	url:'/api/score/getById',
+	  	data:submitData,
+	  	type:'POST',
+	  	success:function(res){
+	  		layer.msg(JSON.stringify(res));
+			
+			
+			// res = ResponseResult
+	  		if(res && res.code == 200){
+	  			layer.msg("显示成绩成功");
+				var user = res.data;
+	  			//给表单赋值
+	  			form.val("userFilter", user);
+	  		}else{
+	  			layer.msg("显示成绩失败");
+	  		}
+	  		
+	  	},
+	  	error:function(){
+			
+	  		layer.msg("显示成绩异常");
+	  	}
+	  })
+	  
 	  
 	  //监听提交
-	  
-		  
-	  form.on('submit(formDemo)', function(){
-		  
-	    submitData.score = $("input[name='score']").val();
+	  form.on('submit(formDemo)', function(data){
+	    layer.msg(JSON.stringify(data.field));
 		
 		$.ajax({
-			url:'/api/score/add',
-			data:submitData,
+			url:'/api/score/update',
+			data:data.field,
 			type:'POST',
 			success:function(res){
 				// layer.msg(res);
 				if(res && res.code == 200){
-					layer.msg("输入成绩成功");
+					layer.msg("更新成功");
 					
 				}else{
-					layer.msg("输入成绩失败");
+					layer.msg("更新失败");
 				}
 				
 			},
 			error:function(){
-				layer.msg("输入成绩异常");
+				layer.msg("更新异常");
 			}
 		})
 		
 		
 		
-	    return false;
+	      return false;
 	  });
 	});
+	
+	
 	</script>
 	</body>
 </html>
