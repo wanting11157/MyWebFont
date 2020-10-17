@@ -12,23 +12,30 @@
 	<form class="layui-form" lay-filter="userFilter">
 	  
 	  <div class="layui-form-item">
+	    <label class="layui-form-label">成绩id</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="id" readonly="readonly" autocomplete="off" class="layui-input">
+	    </div>
+	  </div>
+	  
+	  <div class="layui-form-item">
 	    <label class="layui-form-label">课程id</label>
 	    <div class="layui-input-block">
-	      <input type="int" name="courseId" required  lay-verify="required" readonly="readonly" autocomplete="on" class="layui-input">
+	      <input type="int" name="courseId" required  lay-verify="required" placeholder="请输入课程id" autocomplete="on" class="layui-input">
 	    </div>
 	  </div>
 	  
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">学生id</label>
 	    <div class="layui-input-block">
-	      <input type="int" name="studentId" required  lay-verify="required" readonly="readonly" autocomplete="on" class="layui-input">
+	      <input type="int" name="studentId" required  lay-verify="required" placeholder="请输入学生id" autocomplete="on" class="layui-input">
 	    </div>
 	  </div>
 	  
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">成绩</label>
 	    <div class="layui-input-block">
-	      <input type="text" name="score" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+	      <input type="text" name="score" required  lay-verify="required" placeholder="请输入成绩" autocomplete="off" class="layui-input">
 	    </div>
 	  </div>
 	  
@@ -59,22 +66,23 @@
 	  var form = layui.form;
 	  var $ = layui.jquery;
 	  
-	  var courseId = location.href.split("=")[1];
-	   courseId = courseId.substr(0, 1);
-	   if(!courseId){
-	  layer.msg("您没有输入要增加成绩的那个课程的id");
-	  return false;
-	  }
+	  // var courseId = location.href.split("=")[1];
+	  //  courseId = courseId.substr(0, 1);
+	  //  if(!courseId){
+	  // layer.msg("您没有输入要增加成绩的那个课程的id");
+	  // return false;
+	  // }
 	  
-	  var studentId = location.href.split("=")[2];
+	 /* var studentId = location.href.split("=")[2];
 	  courseId = courseId.substr(0, 1);
 	   if(!studentId){
 	  layer.msg("您没有输入要增加成绩的那个学生的id");
 	  return false;
-	  }
+	  } */
 	  var submitData = {};
-	  submitData.courseId=courseId;
-	  submitData.studentId=studentId;
+	  
+	  
+	  submitData.id =location.href.split("=")[1];
 	  
 	  
 	  

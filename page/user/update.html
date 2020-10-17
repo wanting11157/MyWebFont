@@ -2,14 +2,14 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>注册</title>
+		<title>更新</title>
 		<link rel="stylesheet" href="../../iframe/dist/css/layui.css" />
 		
 	</head>
 	<body>
 		<div style="width: 80%;margin-left: auto;margin-right: auto;margin-top: 50px;">
 		
-	<form class="layui-form" action="" lay-filter="userFilter">
+	<form class="layui-form" action="" lay-filter="userFilter"  onsubmit="return false">
 	  
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">用户名</label>
@@ -67,7 +67,7 @@
       private String college;
       private String password;-->
 	  <div class="layui-form-item">
-	    <label class="layui-form-label">密码框</label>
+	    <label class="layui-form-label">密码</label>
 	    <div class="layui-input-inline">
 	      <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
 	    </div>
@@ -107,6 +107,7 @@
 		}
 	  var submitData = {id:myid};
 	  
+	  // layer.load();
 	  
 	  //查用户
 	  $.ajax({
@@ -147,7 +148,7 @@
 				// layer.msg(res);
 				if(res && res.code == 200){
 					layer.msg("更新成功");
-					
+					location.href = 'list.html';
 				}else{
 					layer.msg("更新失败");
 				}

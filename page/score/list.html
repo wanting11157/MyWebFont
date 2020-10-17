@@ -31,7 +31,14 @@
 	 <!-- -------------------------------------------->
 	 <table id="user" lay-filter="test"></table>
 	 
-	 
+	 <a href="../score/list.html">成绩</a>
+	  <a href="../user/list.html">用户</a>
+	   <a href="../course/list.html">课程</a>
+	 <script type="text/html" id="barUpdateDele">
+	   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="updateUser">修改</a>
+	   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="delUser">删除</a>
+	 </script>  
+	   
 	<script src="../../iframe/dist/layui.all.js"></script>
 	<script>
 	//Demo
@@ -40,6 +47,27 @@
 	  var $ = layui.jquery;
 	  var table = layui.table;
 	  
+	  table.on('tool(test)',function(obj){
+	  		  
+	  		  console.log(obj)
+	  		  
+	  		  if(obj.event == 'updateUser'){
+	  			  layer.msg('修改',function(){
+	  				  location.href = './update.html?id='+obj.data.id;
+	  			  })
+	  		  }else if(obj.event == 'delUser'){
+	  			  
+	  				  // user = obj.data;
+	  				  delUser(obj.data.id);// user.id
+	  			 
+	  			  layer.msg('删除');
+	  			  
+	  			  
+	  		  }else{
+	  			  layer.msg('未知事件')
+	  		  }
+	  		  
+	  })
 	  //监听提交
 	  form.on('submit(search)', function(data){
 	    var formData = data.field;
@@ -80,10 +108,8 @@ remark
 						  ,{field: 'updateTime', title: '更新时间', width: 120}
 						  ,{field: 'createTime', title: '创建时间', width: 120}
 						  ,{field: 'remark', title: '备份', width: 120}
-					      ,{field: '', title: '操作', width: 320,templet:function(score){ 
-							  console.log(JSON.stringify(score));
-							  return '<a target="_blank" href="./update.html?id='+score.id+'">修改</a> '+' &nbsp; <a href="javascript:void(0);" onclick="delUser('+score.id+')">删除</a>';}
-						 }
+					      ,{field: '', title: '操作', width: 320,toolbar:'#barUpdateDele'}
+						
 					    ]]
 					});
 					
@@ -110,10 +136,16 @@ remark
 	  		  	data:{id:id},
 	  		  	type:'POST',
 	  		  	success:function(res){
-	  				console.log(JSON.stringify(res));
+	  					if(res && res.code == 200){
+	  						layer.msg("删除成功");
+	  				    console.log(JSON.stringify(res));
+	  						console.log("删除成功");
+	  					}else{
+	  					layer.msg("删除失败");
+	  				    }
 	  			},
 	  			error:function(){
-	  				layer.msg("查询异常");
+	  				layer.msg("删除异常");
 	  			}
 	  		});
 	  }
