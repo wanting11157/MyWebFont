@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>用户列表</title>
+		<title>课程列表</title>
 		<!-- 外部样式表 -->
 		<link rel="stylesheet" href="../../iframe/dist/css/layui.css" media="all"/>
 		
@@ -32,19 +32,11 @@
 	 <table id="user" lay-filter="userTable"> </table>
 	 
 	 
-	 <a href="../score/list.html">成绩</a>
+	 <a href="../score/list2.html">成绩</a>
 	  <a href="../user/list.html">用户</a>
-	   <a href="../course/list.html">课程</a>
+	   <a href="../course/list1.html">课程</a>
 	   
 	   
-	  
-	   <!-- 表上的工具条模板-->
-	   <!-- <div class="layui-btn-group" id="allBar">
-		 <button type="button" class="layui-btn layui-btn-primary" lay-event="add">新增</button>
-	     <button type="button" class="layui-btn layui-btn-primary" lay-event="update">修改</button>
-	     <button type="button" class="layui-btn layui-btn-primary" lay-event="del">删除</button>
-	   
-	   </div> -->
 		
 	   <script type="text/html" id="allBar">
 		 <a class="layui-btn layui-btn-primary" lay-event="add">新增</a>
@@ -53,12 +45,6 @@
 	   </script>
 	    <!-- 行间的工具条模板 -->
 		
-	<!-- <script type="text/html" class="layui-btn-group" id="barUpdateDele">
-			 
-	  <button type="button" class="layui-btn layui-btn-primary" lay-event="updateUser">修改</button>
-	  <button type="button" class="layui-btn layui-btn-primary" lay-event="delUser">删除</button>
-	
-	</script> -->
 	
 	<script type="text/html" id="barUpdateDele">
 	   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="updateUser">修改</a>
@@ -73,12 +59,10 @@
 		
 		
 	//Demo
-	layui.use(['form','jquery','table','laypage'], function(){
+	layui.use(['form','jquery','table'], function(){
 	  var form = layui.form;
 	  var $ = layui.jquery;
 	  var table = layui.table;
-	  var laypage = layui.laypage;
-	  
 	  
 	  // 监听表格行间操作事件
 	  table.on('tool(userTable)',function(obj){
@@ -91,7 +75,7 @@
 			  	 title:'更改用户信息',
 			     type:2, 
 			  	 area:['100%','100%'],
-			  	 content: './update.html?id='+obj.data.id
+			  	 content: './update.html?id='+obj.data.id,
 				 });
 			  // location.href = './update.html?id='+obj.data.id;
 			 
@@ -112,31 +96,7 @@
 		  
 	  });
 	  
-	  // table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-	  //   var data = obj.data; //获得当前行数据
-	  //   var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-	  //   var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
-	   
-	  //   if(layEvent === 'detail'){ //查看
-	  //     //do somehing
-	  //   } else if(layEvent === 'del'){ //删除
-	  //     layer.confirm('真的删除行么', function(index){
-	  //       obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-	  //       layer.close(index);
-	  //       //向服务端发送删除指令
-	  //     });
-	  //   } else if(layEvent === 'edit'){ //编辑
-	  //     //do something
-	      
-	  //     //同步更新缓存对应的值
-	  //     obj.update({
-	  //       username: '123'
-	  //       ,title: 'xxx'
-	  //     });
-	  //   } else if(layEvent === 'LAYTABLE_TIPS'){
-	  //     layer.alert('Hi，头部工具栏扩展的右侧图标。');
-	  //   }
-	  // });
+	  
 	  //监听表头按钮
 	  table.on('toolbar(userTable)',function(data){
 		  
@@ -144,7 +104,7 @@
 		  
 		  if(data.event == 'add'){
 			  layer.open({
-				title:'新增用户',
+				title:'新增课程',
 			    type:2, 
 				area:['100%','100%'],
 				cancel: function(index, layero){ 
@@ -154,7 +114,7 @@
 				  }
 				   
 				},  
-			    content: './register.html' //这里content是一个普通的String
+			    content: './add.html' //这里content是一个普通的String
 			    //content: $('#addUserForm') //这里content是一个普通的String
 				//<div id="tong" class="hide" style="width: 670px;height: 320px;display: none;">
 			  });
@@ -167,21 +127,13 @@
 			   } else{
 				   // location.href = './update.html?id='+checkStatus.data[0].id;
 				   layer.open({
-				   	 title:'更改用户信息',
+				   	 title:'更改课程信息',
 				     type:2, 
 				   	 area:['100%','100%'],
-					 content: './update.html?id='+checkStatus.data[0].id
+					 content: './update.html?id='+checkStatus.data[0].id,
+					 
 					
-					
-				   				// cancel: function(index, layero){ 
-				   				//   if(confirm('确定要关闭么')){ //只有当点击confirm框的确定时，该层才会关闭
-				   				//     layer.close(index)
-				   				// 	location.reload()
-				   				//   }
-				   				   
-				   				// } 
-				     //content: $('#addUserForm') //这里content是一个普通的String
-				   				//<div id="tong" class="hide" style="width: 670px;height: 320px;display: none;">
+				   		
 				   });
 				   // console.log("a:"+data.update);
 				    // obj.update({
@@ -202,23 +154,9 @@
 						
 					}
 					if(confirm('确定要删除这些行么？'+myString)){
-						for(i in checkStatus.data){
+						for(i in checkStatus.data)
 							delUser(checkStatus.data[i].id);
-							
-						    // checkStatus.del(); //删除对应行（tr）的DOM结构，并更新缓存
-						}
-						console.log(tableIns.config.page);
-						var cr=tableIns.config.page.curr;
-						// var lim=tableIns.config.page.limit;
-						tableIns.reload({
-						  // where: { //设定异步数据接口的额外参数，任意设
-						  //   limit:lim
-						  // },
-						  page: {
-						    curr: cr //重新从第 1 页开始
-						  }
-						
-						});
+						obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
 						// layer.close(index);//向服务端发送删除指令
 					}
 				 //只有当点击confirm框的确定时，该层才会关闭
@@ -232,39 +170,23 @@
 	  let tableHead = [[ //标题栏
 	  			      {checkbox: true}
 	  			     ,{field: 'id', title: 'ID', width: '5%'}
-	  			     ,{field: 'name', title: '姓名', width: '8%'}
-	  			     ,{field: 'major', title: '专业', width: '8%'}
-	  			     ,{field: 'haoma', title: '学号', width: '8%'}
-	  			     ,{field: 'sex', title: '性别', width: '8%',templet:(row)=>{  return row.sex==1?'女':'男'}}
+	  			     ,{field: 'name', title: '课程名', width: '8%'}
+	  			     ,{field: 'teacherId', title: '教师id', width: '8%'}
+	  			     ,{field: 'teacherName', title: '教师姓名', width: '8%'}
 	  			     ,{field: 'college', title: '院系', width: '8%'}
-	  			     ,{field: 'password', title: '密码', width: '8%'}
+	  			     ,{field: 'team', title: '学期', width: '8%'}
 	  			     ,{field: 'updateTime', title: '更新时间', width: '8%'}
 	  			     ,{field: 'createTime', title: '创建时间', width: '8%'}
 	  			     ,{field: 'remark', title: '备份', width: '8%'}
 	  			      ,{field: '', title: '操作',toolbar:'#barUpdateDele'}
 	  			    ]];
-					
-	 // laypage.render({
-	 //   elem: 'user'
-	  
-	 //   ,jump: function(obj1, first1){
-	 //     //obj包含了当前分页的所有参数，比如：
-	     
-	     
-	 //     //首次不执行
-	 //     // if(!first){
-	 //       //do something
-	 //     // }
-	 //   }
-	 // });
-	 // console.log("obj1.curr:"+obj1.curr); //得到当前页，以便向服务端请求对应页的数据。
-	 // console.log("obj1.limit:"+obj1.limit); //得到每页显示的条数
 	 
-	 var tableIns = table.render({
+	 
+	 table.render({
 	 	elem:'#user',
 		
 	 	cols:  tableHead,
-		url:'/api/user/search',
+		url:'/api/course/search',
 	 	toolbar: '#allBar' //开启头部工具栏，并为其绑定左侧模板
 	     ,defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
 	 		title: '提示'
@@ -295,9 +217,7 @@
 		// 	  "data": res.data //解析数据列表
 		// 	};
 		// }
-		
-		});
-	 // });
+	 });
 	 
 	 
 	 
