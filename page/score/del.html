@@ -1,0 +1,29 @@
+<script>
+ layui.use(['form','jquery','table'], function(){
+	var $ = layui.jquery;
+	
+ var score = document.getElementById('testScript').getAttribute('data');
+ function del(score){
+				  $.ajax({
+				  	url:'/api/score/del',
+				  	data:score,
+				  	type:'POST',
+				  	success:function(res){
+							if(res && res.code == 200){
+								layer.msg(JSON.stringify(score)+"删除成功",{time:3000});
+						        return 'a';
+							}else{
+							 layer.msg(JSON.stringify(score)+"删除失败",{time:5000});	
+							 console.log(JSON.stringify(score)+"删除失败",{time:5000});
+							 return 'b';
+						    }
+					},
+					error:function(){
+						layer.msg(JSON.stringify(score)+"删除异常",{time:5000});	
+						console.log(JSON.stringify(score)+"删除异常",{time:5000});
+						return 'b';
+						
+					}
+				});
+		}
+</script>

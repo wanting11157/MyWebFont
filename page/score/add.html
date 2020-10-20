@@ -8,13 +8,38 @@
 	</head>
 	<body>
 		<div style="width: 80%;margin-left: auto;margin-right: auto;margin-top: 50px;">
-		
-	<form class="layui-form" >
-	  
+
+	<form class="layui-form" lay-filter="addScoreForm">
+
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">用户</label>
+			<div class="layui-input-block">
+				<select id="studentId" name="studentId" lay-verify="required">
+
+				</select>
+
+
+
+			</div>
+		</div>
+
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">课程</label>
+			<div class="layui-input-block">
+				<select id="courseId" name="courseId" lay-verify="required">
+				</select>
+
+			</div>
+		</div>
+
+
+
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">成绩</label>
 	    <div class="layui-input-block">
-	      <input type="text" name="score" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+	      <input type="text" id="score" name="score" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
 	    </div>
 	  </div>
 	  
@@ -42,47 +67,38 @@
 	//Demo
 	layui.use(['form','jquery'], function(){
 		
-	  var form = layui.form;
-	  var $ = layui.jquery;
-	  
-	  
-	    
-	   var courseId = location.href.split("=")[1];
-	   courseId = courseId.substr(0, 1);
-	   if(!courseId){
-	  layer.msg("您没有输入要增加成绩的那个课程的id");
-	  return false;
-	  }
-	  
-	  var studentId = location.href.split("=")[2];
-	  courseId = courseId.substr(0, 1);
-	   if(!studentId){
-	  layer.msg("您没有输入要增加成绩的那个学生的id");
-	  return false;
-	  }
-	  var submitData = {};
-	  submitData.courseId=courseId;
-	  submitData.studentId=studentId;
-	  
-	  
-	    
-	  
+	  	var form = layui.form;
+	  	var $ = layui.jquery;
+
+		let param = getHrefParam();
+
+		if(param.studentId  && param.courseId){
+			$.getJSON('/api/score/search',{studentId:param.studentId,courseId:param.courseId},function (res) {
+				if(res.code == 200 && res.data){
+					$("#score").val(res.data[0].score);
+					form.render();
+				}
+			})
+		}
+
+
+		//查所有用户(学生)
+		renderSelect("student",param.studentId);
+		renderSelect("course",param.courseId);
+		//查所有课程
+
 	  //监听提交
 	  
 		  
-	  form.on('submit(formDemo)', function(){
-		  
-	    submitData.score = $("input[name='score']").val();
-		
+	  form.on('submit(formDemo)', function(data){
 		$.ajax({
 			url:'/api/score/add',
-			data:submitData,
+			data:data.field,
 			type:'POST',
 			success:function(res){
 				// layer.msg(res);
 				if(res && res.code == 200){
 					layer.msg("输入成绩成功");
-					
 				}else{
 					layer.msg("输入成绩失败");
 				}
@@ -97,7 +113,48 @@
 		
 	    return false;
 	  });
+
+	  function renderSelect(type,defaultOptionValue) {
+	  		let urlType = type;
+	  		if(urlType == "student"){
+				urlType = "user";
+			}
+		  $.ajax({
+			  url:'/api/'+urlType+'/search',
+			  data: {rows:1000},
+			  type:'POST',
+			  success:function(res){
+				  if(res.code == 200){
+					  let items = res.data;
+					  let options = '<option value="">-请选择-</option>';
+					  for(let i = 0;i<items.length;i++ ){
+						  let item = items[i];
+						  let selected = '';
+						  if(item.id == defaultOptionValue){
+							  selected = ' selected = "selected" ';
+						  }
+						  options+= '<option value="'+item.id+'" '+selected+'>'+item.name+'</option>';
+					  }
+					  $("#"+type+"Id").html(options);
+					  form.render("select", "addScoreForm");
+				  }
+			  }});
+	  }
 	});
+
+	function getHrefParam() {
+		let param = {};
+		if(location.search.length>1) {
+			let paramStringList = location.search.substring(1).split("&");//["courseId=1","studentId=1"]
+			for (let index in paramStringList) {
+				let p = paramStringList[index].split("=");//["courseId","1"]
+				param[p[0]] = p[1]; // p["courseId"] = "1"     ===  p.courseId = 1;
+			}
+		}
+		return param;
+	}
+
+
 	</script>
 	</body>
 </html>

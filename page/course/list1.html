@@ -75,16 +75,19 @@
 			  	 title:'更改用户信息',
 			     type:2, 
 			  	 area:['100%','100%'],
-			  	 content: './update.html?id='+obj.data.id,
+			  	 content: './update.html?id='+obj.data.id
 				 });
 			  // location.href = './update.html?id='+obj.data.id;
 			 
 		  }else if(obj.event == 'delUser'){
 			  layer.confirm('真的删除行:id:'+obj.data.id+'么？', function(index){
-				delUser(obj.data.id);
+				delCourse(obj.data.id);
+				var score={courseId:obj.data.id};
+				del(score);
 				obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
 				layer.close(index);
 				// location.reload();
+				
 				
 				
 			  });
@@ -107,12 +110,8 @@
 				title:'新增课程',
 			    type:2, 
 				area:['100%','100%'],
-				cancel: function(index, layero){ 
-				  if(confirm('确定要关闭么')){ //只有当点击confirm框的确定时，该层才会关闭
-				    layer.close(index)
-					location.reload()
-				  }
-				   
+				end: function(index, layero){
+					table.reload("courseTableId")
 				},  
 			    content: './add.html' //这里content是一个普通的String
 			    //content: $('#addUserForm') //这里content是一个普通的String
@@ -120,7 +119,7 @@
 			  });
 		  }
 		  if(data.event == 'update'){
-			   if(checkStatus.data.length === 0) {
+			   if(checkStatus.data.length == 0) {
 			         layer.msg('请选择一行');
 			   } else if(checkStatus.data.length > 1) {
 			         layer.msg('只能同时编辑一个');
@@ -130,16 +129,14 @@
 				   	 title:'更改课程信息',
 				     type:2, 
 				   	 area:['100%','100%'],
-					 content: './update.html?id='+checkStatus.data[0].id,
-					 
-					
-				   		
+					 content: './update.html?id='+checkStatus.data[0].id
+
+					   end: function(index, layero){
+						   table.reload("courseTableId")
+					   },
+
 				   });
-				   // console.log("a:"+data.update);
-				    // obj.update({
-				    //      username: '123'
-				    //      ,title: 'xxx'
-				    //    });
+
 			   }
 			 
 		  }
@@ -154,9 +151,11 @@
 						
 					}
 					if(confirm('确定要删除这些行么？'+myString)){
-						for(i in checkStatus.data)
-							delUser(checkStatus.data[i].id);
-						obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+						
+						for(i in checkStatus.data){
+							delCourse(checkStatus.data[i].id);
+						}
+						// obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
 						// layer.close(index);//向服务端发送删除指令
 					}
 				 //只有当点击confirm框的确定时，该层才会关闭
@@ -183,8 +182,8 @@
 	 
 	 
 	 table.render({
+		 id:"courseTableId",
 	 	elem:'#user',
-		
 	 	cols:  tableHead,
 		url:'/api/course/search',
 	 	toolbar: '#allBar' //开启头部工具栏，并为其绑定左侧模板
@@ -193,7 +192,7 @@
 	         ,layEvent: 'LAYTABLE_TIPS'
 	         ,icon: 'layui-icon-tips'
 	       }]
-	     ,title: '用户数据表'
+	     ,title: '课程总表'
 		 ,page:true
 		 ,limit:10
 		 // ,limit:[10,30,50,100]
@@ -228,27 +227,41 @@
 		
 		// --   独立定义的方法
 		
-		function delUser(id){
+		function delCourse(id){
+
+			// 查课程下是否有成绩
+			// 有  就提示
+			// 		确认 则删除
+			//		取消 则退出
+			// 无 就删除
+
+
 				  $.ajax({
-				  	url:'/api/user/del',
+				  	url:'/api/course/del',
 				  	data:{id:id},
 				  	type:'POST',
 				  	success:function(res){
 							if(res && res.code == 200){
-								layer.msg("id:"+id+"删除成功",{time:3000});
+								layer.msg("courseId:"+id+"删除成功",{time:3000});
 						        return 'a';
 							}else{
-							 console.log("id:"+id+"删除失败",{time:5000});
+							 layer.msg("courseId:"+id+"删除失败",{time:5000});	
+							 console.log("courseId:"+id+"删除失败",{time:5000});
 							 return 'b';
 						    }
 					},
 					error:function(){
-						console.log("id:"+id+"删除异常",{time:5000});
+						layer.msg("courseId:"+id+"删除异常",{time:5000});	
+						console.log("courseId:"+id+"删除异常",{time:5000});
 						return 'b';
 						
 					}
 				});
 		}
+		
+
+		
+		
 	});
 	
 	

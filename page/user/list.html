@@ -32,9 +32,9 @@
 	 <table id="user" lay-filter="userTable"> </table>
 	 
 	 
-	 <a href="../score/list.html">成绩</a>
+	 <a href="../score/list2.html">成绩</a>
 	  <a href="../user/list.html">用户</a>
-	   <a href="../course/list.html">课程</a>
+	   <a href="../course/list1.html">课程</a>
 	   
 	   
 	  
@@ -141,16 +141,22 @@
 	  table.on('toolbar(userTable)',function(data){
 		  
 		  var checkStatus = table.checkStatus(data.config.id);
-		  
+          console.log(tableIns.config.page.pages);
 		  if(data.event == 'add'){
 			  layer.open({
 				title:'新增用户',
 			    type:2, 
 				area:['100%','100%'],
-				cancel: function(index, layero){ 
+                cancel: function(index, layero){
 				  if(confirm('确定要关闭么')){ //只有当点击confirm框的确定时，该层才会关闭
 				    layer.close(index)
-					location.reload()
+                      tableIns.reload({
+                          page: {
+                              curr: tableIns.config.page.pages //重新从第 1 页开始
+                          }
+                      });
+
+
 				  }
 				   
 				},  
@@ -167,19 +173,14 @@
 			   } else{
 				   // location.href = './update.html?id='+checkStatus.data[0].id;
 				   layer.open({
-				   	 title:'更改用户信息',
-				     type:2, 
-				   	 area:['100%','100%'],
-					 content: './update.html?id='+checkStatus.data[0].id
-					
-					
-				   				// cancel: function(index, layero){ 
-				   				//   if(confirm('确定要关闭么')){ //只有当点击confirm框的确定时，该层才会关闭
-				   				//     layer.close(index)
-				   				// 	location.reload()
-				   				//   }
-				   				   
-				   				// } 
+					   title:'更改用户信息',
+					   type:2,
+					   area:['100%','100%'],
+					   content: './update.html?id='+checkStatus.data[0].id,
+					   end: function(index, layero){
+					   		//layer.msg('要关更新窗口了')
+						   reloadTable();
+					   }
 				     //content: $('#addUserForm') //这里content是一个普通的String
 				   				//<div id="tong" class="hide" style="width: 670px;height: 320px;display: none;">
 				   });
@@ -193,34 +194,22 @@
 		  }
 		  if(data.event == 'del'){
 				if(checkStatus.data.length === 0) {
-				      layer.msg('请选择一行',{time:2000});
+				      layer.msg('请选择一行');
 				}else{
 					
 					var myString = "";
 					for(i in checkStatus.data){
 						myString=myString+JSON.stringify(checkStatus.data[i])+"";
-						
 					}
 					if(confirm('确定要删除这些行么？'+myString)){
+						let ids = [];
 						for(i in checkStatus.data){
-							delUser(checkStatus.data[i].id);
-							
-						    // checkStatus.del(); //删除对应行（tr）的DOM结构，并更新缓存
+							ids.push(checkStatus.data[i].id);
 						}
-						console.log(tableIns.config.page);
-						var cr=tableIns.config.page.curr;
-						// var lim=tableIns.config.page.limit;
-						tableIns.reload({
-						  // where: { //设定异步数据接口的额外参数，任意设
-						  //   limit:lim
-						  // },
-						  page: {
-						    curr: cr //重新从第 1 页开始
-						  }
-						
-						});
-						// layer.close(index);//向服务端发送删除指令
+						delUser(ids,reloadTable);
+
 					}
+
 				 //只有当点击confirm框的确定时，该层才会关闭
 				// 	   // layer.close(index)
 				// 	   // location.reload()
@@ -228,6 +217,10 @@
 		  }
 		  }
 	  });
+
+	  table.on('edit(userTable)',function (obj) {
+
+	  })
 
 	  let tableHead = [[ //标题栏
 	  			      {checkbox: true}
@@ -261,6 +254,7 @@
 	 // console.log("obj1.limit:"+obj1.limit); //得到每页显示的条数
 	 
 	 var tableIns = table.render({
+		 id: 'idTest',
 	 	elem:'#user',
 		
 	 	cols:  tableHead,
@@ -307,27 +301,44 @@
 		
 		
 		// --   独立定义的方法
-		
-		function delUser(id){
-				  $.ajax({
-				  	url:'/api/user/del',
-				  	data:{id:id},
+		/**
+		 *
+		 * @param ids 多个id组成的数组 如： [38,478,32]
+		 * @param reloadTableFun 删除成功后刷新页面的回调函数
+		 */
+		function delUser(ids,reloadTableFun){
+
+			$.ajax({
+				  	url:'/api/user/dels',
+				  	//data:JSON.stringify( submitData),
+				  	data: {ids:ids},
 				  	type:'POST',
+					//dataType: 'json',
+					//contentType: 'application/json',
 				  	success:function(res){
 							if(res && res.code == 200){
-								layer.msg("id:"+id+"删除成功",{time:3000});
-						        return 'a';
+								layer.msg("id:"+ids+"删除成功");
+
+								if(typeof reloadTableFun == 'function'){
+									reloadTableFun();
+								}
+
 							}else{
-							 console.log("id:"+id+"删除失败",{time:5000});
-							 return 'b';
+							 console.log("id:"+ids+"删除失败",{time:5000});
+
 						    }
 					},
 					error:function(){
-						console.log("id:"+id+"删除异常",{time:5000});
-						return 'b';
-						
+						console.log("id:"+ids+"删除异常",{time:5000});
 					}
 				});
+		}
+
+		function reloadTable(tableId) {
+			if(!tableId){
+				tableId = "idTest";
+			}
+			table.reload(tableId);
 		}
 	});
 	

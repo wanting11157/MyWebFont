@@ -128,7 +128,8 @@
 				// layer.msg(res);
 				if(res && res.code == 200){
 					layer.msg("更新成功");
-					
+					var index = parent.layer.getFrameIndex(window.name)
+					parent.layer.close(index); //再执行关闭
 				}else{
 					layer.msg("更新失败");
 				}
