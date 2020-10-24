@@ -8,9 +8,9 @@
 		
 	</head>
 	<body>
-	<div style="width: 80%;margin-left: auto;margin-right: auto;margin-top: 50px;">
+	<div style="padding: 10px;">
 		
-	<form class="layui-form" action="">
+	<form class="layui-form" action="" lay-filter="searchForm">
 	  
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">用户id</label>
@@ -18,25 +18,20 @@
 	      <input type="text" name="id" placeholder="请输入用户id" autocomplete="off" class="layui-input">
 	    </div>
 	  </div>
-	  
-	  <div class="layui-form-item">
-	    <div class="layui-input-block">
-	      <button class="layui-btn" lay-submit lay-filter="search">全部查询</button>
-	     
-	    </div>
-	  </div>
+<!--	  -->
+<!--	  <div class="layui-form-item">-->
+<!--	    <div class="layui-input-block">-->
+<!--	      <button class="layui-btn" lay-submit lay-filter="search">全部查询</button>-->
+<!--	     -->
+<!--	    </div>-->
+<!--	  </div>-->
 	</form>
 	 
 	 </div>
 	 
 	 <table id="user" lay-filter="userTable"> </table>
 	 
-	 
-	 <a href="../score/list2.html">成绩</a>
-	  <a href="../user/list.html">用户</a>
-	   <a href="../course/list1.html">课程</a>
-	   
-	   
+
 	  
 	   <!-- 表上的工具条模板-->
 	   <!-- <div class="layui-btn-group" id="allBar">
@@ -45,8 +40,11 @@
 	     <button type="button" class="layui-btn layui-btn-primary" lay-event="del">删除</button>
 	   
 	   </div> -->
-		
+    <!-- 表头的工具条模板 -->
 	   <script type="text/html" id="allBar">
+		 <a class="layui-btn layui-btn-primary" lay-event="search">查询</a>
+		 <a class="layui-btn layui-btn-primary" lay-event="courseManager">课程管理</a>
+		 <a class="layui-btn layui-btn-primary" lay-event="scoreManager">成绩管理</a>
 		 <a class="layui-btn layui-btn-primary" lay-event="add">新增</a>
 	     <a class="layui-btn layui-btn-primary" lay-event="update">修改</a>
 	     <a class="layui-btn layui-btn-primary" lay-event="del">删除</a>
@@ -91,16 +89,20 @@
 			  	 title:'更改用户信息',
 			     type:2, 
 			  	 area:['100%','100%'],
-			  	 content: './update.html?id='+obj.data.id
+			  	 content: './update.html?id='+obj.data.id,
+                  end: function(index, layero){
+                      //layer.msg('要关更新窗口了')
+                      reloadTable();
+                  }
+
 				 });
 			  // location.href = './update.html?id='+obj.data.id;
 			 
 		  }else if(obj.event == 'delUser'){
 			  layer.confirm('真的删除行:id:'+obj.data.id+'么？', function(index){
-				delUser(obj.data.id);
-				obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-				layer.close(index);
-				// location.reload();
+                  var ids = [];
+                  ids.push(obj.data.id);
+                  searchScoreStuId(ids);
 				
 				
 			  });
@@ -112,36 +114,35 @@
 		  
 	  });
 	  
-	  // table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-	  //   var data = obj.data; //获得当前行数据
-	  //   var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-	  //   var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
-	   
-	  //   if(layEvent === 'detail'){ //查看
-	  //     //do somehing
-	  //   } else if(layEvent === 'del'){ //删除
-	  //     layer.confirm('真的删除行么', function(index){
-	  //       obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-	  //       layer.close(index);
-	  //       //向服务端发送删除指令
-	  //     });
-	  //   } else if(layEvent === 'edit'){ //编辑
-	  //     //do something
-	      
-	  //     //同步更新缓存对应的值
-	  //     obj.update({
-	  //       username: '123'
-	  //       ,title: 'xxx'
-	  //     });
-	  //   } else if(layEvent === 'LAYTABLE_TIPS'){
-	  //     layer.alert('Hi，头部工具栏扩展的右侧图标。');
-	  //   }
-	  // });
+
 	  //监听表头按钮
 	  table.on('toolbar(userTable)',function(data){
 		  
 		  var checkStatus = table.checkStatus(data.config.id);
-          console.log(tableIns.config.page.pages);
+
+
+		  if(data.event == 'search'){//查询  表格内容
+		      console.log(form.val('searchForm'))
+              table.reload('idTest', {
+                  url: '/api/user/getById',
+                  where: form.val('searchForm')
+                  //设定异步数据接口的额外参数
+                  , parseData: function (res) { //res 即为原始返回的数据
+                      console.log(JSON.stringify(res))
+                      return {
+                          "code": res.code, //解析接口状态
+                          "msg": res.msg, //解析提示文本
+                          // "count": 1, //解析数据长度
+                           "data": [res.data] //解析数据列表
+                      };
+                  }
+
+              });
+          }else if(data.event == 'courseManager'){//跳转到课程列表
+                location.href = '../course/list.html';
+          }else if(data.event == 'scoreManager'){//跳转到成绩列表
+              location.href = '../score/list.html';
+          }else
 		  if(data.event == 'add'){
 			  layer.open({
 				title:'新增用户',
@@ -197,23 +198,20 @@
 				      layer.msg('请选择一行');
 				}else{
 					
-					var myString = "";
+					let myString = "";
 					for(i in checkStatus.data){
 						myString=myString+JSON.stringify(checkStatus.data[i])+"";
 					}
 					if(confirm('确定要删除这些行么？'+myString)){
-						let ids = [];
+					    var ids = [];
 						for(i in checkStatus.data){
 							ids.push(checkStatus.data[i].id);
 						}
-						delUser(ids,reloadTable);
+                        // delUser(ids,reloadTable);
+                        searchScoreStuId(ids);
 
-					}
+                    }
 
-				 //只有当点击confirm框的确定时，该层才会关闭
-				// 	   // layer.close(index)
-				// 	   // location.reload()
-				// }
 		  }
 		  }
 	  });
@@ -237,26 +235,11 @@
 	  			      ,{field: '', title: '操作',toolbar:'#barUpdateDele'}
 	  			    ]];
 					
-	 // laypage.render({
-	 //   elem: 'user'
-	  
-	 //   ,jump: function(obj1, first1){
-	 //     //obj包含了当前分页的所有参数，比如：
-	     
-	     
-	 //     //首次不执行
-	 //     // if(!first){
-	 //       //do something
-	 //     // }
-	 //   }
-	 // });
-	 // console.log("obj1.curr:"+obj1.curr); //得到当前页，以便向服务端请求对应页的数据。
-	 // console.log("obj1.limit:"+obj1.limit); //得到每页显示的条数
+
 	 
 	 var tableIns = table.render({
 		 id: 'idTest',
 	 	elem:'#user',
-		
 	 	cols:  tableHead,
 		url:'/api/user/search',
 	 	toolbar: '#allBar' //开启头部工具栏，并为其绑定左侧模板
@@ -301,6 +284,36 @@
 		
 		
 		// --   独立定义的方法
+        function searchScoreStuId(ids){
+
+            $.ajax({
+                url:'/api/score/getByStuIds',
+                //data:JSON.stringify( submitData),   //用个注释的属性，是为了后端接收嵌套对象（复杂类型）
+                data: {stuIds:ids},
+                type:'POST',
+                //dataType: 'json',
+                //contentType: 'application/json',
+                success:function(res){
+                    if(res.code == 404){
+                        console.log("score表中没有数据")
+                        delUser(ids,reloadTable);
+                    }else{
+                        console.log("score表中有数据");
+                        layer.msg("score表中有数据");
+                        layer.confirm('您要删除的用户中有用户在score表有成绩，请问还需要删吗？（' +
+                            '删用户的同时会把用户在score表中的成绩一块删了）', function(index){
+                            delUser(ids,reloadTable);
+                            layer.close(index);
+                        });
+
+
+                    }
+                },
+                error:function(){
+                    console.log("id:"+ids+"删除异常",{time:5000});
+                }
+            });
+        }
 		/**
 		 *
 		 * @param ids 多个id组成的数组 如： [38,478,32]
@@ -324,7 +337,11 @@
 								}
 
 							}else{
-							 console.log("id:"+ids+"删除失败",{time:5000});
+							 console.log("id:"+ids+"全部或者部分删除失败",{time:5000});
+                                layer.msg("id:"+ids+"全部或者部分删除失败");
+                                if(typeof reloadTableFun == 'function'){
+                                    reloadTableFun();
+                                }
 
 						    }
 					},

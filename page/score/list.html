@@ -2,160 +2,320 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>课程列表</title>
+		<title>成绩列表</title>
 		<!-- 外部样式表 -->
-		<link rel="stylesheet" href="../../iframe/dist/css/layui.css" />
+		<link rel="stylesheet" href="../../iframe/dist/css/layui.css" media="all"/>
 		
 	</head>
 	<body>
-	<div style="width: 80%;margin-left: auto;margin-right: auto;margin-top: 50px;">
+	<div style="padding: 10px;">
 		
-	<form class="layui-form" action="">
-	  
-	  
+	<form class="layui-form" action="" lay-filter="searchForm">
 	  
 	  <div class="layui-form-item">
-	    <label class="layui-form-label">姓名</label>
+	    <label class="layui-form-label">成绩id</label>
 	    <div class="layui-input-block">
-	      <input type="text" name="name" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+	      <input type="text" name="id" placeholder="请输入成绩id" autocomplete="off" class="layui-input">
 	    </div>
 	  </div>
 	  
-	  <div class="layui-form-item">
-	    <div class="layui-input-block">
-	      <button class="layui-btn" lay-submit lay-filter="search">全部查询</button>
-	      
-	    </div>
-	  </div>
+<!--	  <div class="layui-form-item">-->
+<!--	    <div class="layui-input-block">-->
+<!--	      <button class="layui-btn" lay-submit lay-filter="search">全部查询</button>-->
+<!--	     -->
+<!--	    </div>-->
+<!--	  </div>-->
 	</form>
 	 
 	 </div>
-	 <!-- -------------------------------------------->
-	 <table id="user" lay-filter="test"></table>
 	 
-	 <a href="../score/list.html">成绩</a>
-	  <a href="../user/list.html">用户</a>
-	   <a href="../course/list.html">课程</a>
-	 <script type="text/html" id="barUpdateDele">
+	 <table id="user" lay-filter="userTable"> </table>
+	 
+
+	  
+	   <!-- 表上的工具条模板-->
+	   <!-- <div class="layui-btn-group" id="allBar">
+		 <button type="button" class="layui-btn layui-btn-primary" lay-event="add">新增</button>
+	     <button type="button" class="layui-btn layui-btn-primary" lay-event="update">修改</button>
+	     <button type="button" class="layui-btn layui-btn-primary" lay-event="del">删除</button>
+	   
+	   </div> -->
+		
+	   <script type="text/html" id="allBar">
+		   <a class="layui-btn layui-btn-primary" lay-event="search">查询</a>
+		   <a class="layui-btn layui-btn-primary" lay-event="userManager">用户管理</a>
+		   <a class="layui-btn layui-btn-primary" lay-event="courseManager">课程管理</a>
+		   <a class="layui-btn layui-btn-primary" lay-event="add">新增</a>
+		   <a class="layui-btn layui-btn-primary" lay-event="update">修改</a>
+		   <a class="layui-btn layui-btn-primary" lay-event="del">删除</a>
+
+	   </script>
+	    <!-- 行间的工具条模板 -->
+		
+	<!-- <script type="text/html" class="layui-btn-group" id="barUpdateDele">
+			 
+	  <button type="button" class="layui-btn layui-btn-primary" lay-event="updateUser">修改</button>
+	  <button type="button" class="layui-btn layui-btn-primary" lay-event="delUser">删除</button>
+	
+	</script> -->
+	
+	<script type="text/html" id="barUpdateDele">
 	   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="updateUser">修改</a>
 	   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="delUser">删除</a>
-	 </script>  
-	   
+	 
+    </script>
+	 
+	 
+	 
 	<script src="../../iframe/dist/layui.all.js"></script>
-	<script>
+	<script >
+		
+		
 	//Demo
 	layui.use(['form','jquery','table'], function(){
 	  var form = layui.form;
 	  var $ = layui.jquery;
 	  var table = layui.table;
-	  
-	  table.on('tool(test)',function(obj){
-	  		  
-	  		  console.log(obj)
-	  		  
-	  		  if(obj.event == 'updateUser'){
-	  			  layer.msg('修改',function(){
-	  				  location.href = './update.html?id='+obj.data.id;
-	  			  })
-	  		  }else if(obj.event == 'delUser'){
-	  			  
-	  				  // user = obj.data;
-	  				  delUser(obj.data.id);// user.id
-	  			 
-	  			  layer.msg('删除');
-	  			  
-	  			  
-	  		  }else{
-	  			  layer.msg('未知事件')
-	  		  }
-	  		  
-	  })
-	  //监听提交
-	  form.on('submit(search)', function(data){
-	    var formData = data.field;
-		formData.page = 1;
-		formData.rows = 30;
-		
-		
-		
-		$.ajax({
-			url:'/api/score/search',
-			data:formData,
-			type:'POST',
-			success:function(res){
-			
-				if(res && res.code == 200){
-					layer.msg("查询成功");
-					
-					/* id
-course_id
-score
-student_id
-create_time
-update_time
-remark
 
+	  // 监听表格行间操作事件
+	  table.on('tool(userTable)',function(obj){
+		  
+		  console.log(obj)
+		  
+		  if(obj.event == 'updateUser'){
+			  layer.msg('修改');
+			  layer.open({
+			  	 title:'更改成绩',
+			     type:2, 
+			  	 area:['100%','100%'],
+			  	 content: './update.html?id='+obj.data.id,
+				  end: function(index, layero){
+					  table.reload("scoreTableId")
+				  }
+				 });
 
-					 */
-					table.render({
-						elem:'#user',
-					  height: 300,
-					  data:res.data,
-					  cols:  [[ //标题栏
-					      {checkbox: true}
-					      ,{field: 'id', title: 'ID', width: 80}
-					      ,{field: 'courseId', title: '课程id', width: 120}
-					      ,{field: 'score', title: '成绩', width: 120}
-						  ,{field: 'studentId', title: '学生id', width: 120}
-						  ,{field: 'updateTime', title: '更新时间', width: 120}
-						  ,{field: 'createTime', title: '创建时间', width: 120}
-						  ,{field: 'remark', title: '备份', width: 120}
-					      ,{field: '', title: '操作', width: 320,toolbar:'#barUpdateDele'}
-						
-					    ]]
-					});
-					
-				}else{
-					layer.msg("查询失败");
-				}
+			 
+		  }else if(obj.event == 'delUser'){
+			  layer.confirm('真的删除行:id:'+obj.data.id+'么？', function(index){
+				  var ids = [];
+				  ids.push(obj.data.id);
+				  delScore(ids,reloadTable);
 				
 				
-				
-			},
-			error:function(){
-				layer.msg("查询异常");
-			}
-		});
-		
-		
-		
-	    return false;
+			  });
+			  
+			  
+		  }else{
+			  layer.msg('未知事件')
+		  }
+		  
 	  });
-	  
-	  function delUser(id){
-	  		  $.ajax({
-	  		  	url:'/api/score/del',
-	  		  	data:{id:id},
-	  		  	type:'POST',
-	  		  	success:function(res){
-	  					if(res && res.code == 200){
-	  						layer.msg("删除成功");
-	  				    console.log(JSON.stringify(res));
-	  						console.log("删除成功");
-	  					}else{
-	  					layer.msg("删除失败");
-	  				    }
-	  			},
-	  			error:function(){
-	  				layer.msg("删除异常");
-	  			}
-	  		});
-	  }
+
+	  //监听表头按钮
+	  table.on('toolbar(userTable)',function(data){
+		  
+		  var checkStatus = table.checkStatus(data.config.id);
+
+		  if(data.event == 'search'){//查询  表格内容
+
+			  table.reload('scoreTableId', {
+				  url: '/api/score/getById',
+				  where: form.val('searchForm')
+				  //设定异步数据接口的额外参数
+				  ,parseData: function(res){ //res 即为原始返回的数据
+					  	console.log(JSON.stringify(res))
+					  	return {
+					  	  "code": res.code, //解析接口状态
+					  	  "msg": res.msg, //解析提示文本
+					  	  "count": 1, //解析数据长度
+					  	  "data": [res.data] //解析数据列表
+					  	};
+					  }
+
+			  });
+		  }else if(data.event == 'userManager'){
+			  location.href = '../user/list.html';
+		  }else if(data.event == 'courseManager'){//跳转到课程列表
+			  location.href = '../course/list.html';
+		  }else if(data.event == 'add'){
+			  layer.open({
+				  title:'新增课程',
+				  type:2,
+				  area:['100%','100%'],
+				  end: function(){
+					  table.reload("scoreTableId")
+				  },
+				  content: './add.html',
+				  cancel: function(index, layero){
+					  if(confirm('确定要关闭么')){ //只有当点击confirm框的确定时，该层才会关闭
+						  layer.close(index)
+						  tableIns.reload({
+							  page: {
+								  curr: tableIns.config.page.pages //重新从第 1 页开始
+							  }
+						  });
+
+
+					  }
+
+				  },
+
+				  //content: $('#addUserForm') //这里content是一个普通的String
+				  //<div id="tong" class="hide" style="width: 670px;height: 320px;display: none;">
+			  });
+		  }
+		  if(data.event == 'update'){
+			   if(checkStatus.data.length === 0) {
+			         layer.msg('请选择一行');
+			   } else if(checkStatus.data.length > 1) {
+			         layer.msg('只能同时编辑一个');
+			   } else{
+				   // location.href = './update.html?id='+checkStatus.data[0].id;
+				   layer.open({
+				   	 title:'更改成绩',
+				     type:2, 
+				   	 area:['100%','100%'],
+					 content: './update.html?id='+checkStatus.data[0].id,
+					   end: function(index, layero){
+						   table.reload("scoreTableId");
+					   }
+
+				   });
+
+
+			   }
+			 
+		  }
+		  if(data.event == 'del'){
+				if(checkStatus.data.length === 0) {
+				      layer.msg('请选择一行',{time:2000});
+				}else{
+					
+					var myString = "";
+					for(i in checkStatus.data){
+						myString=myString+JSON.stringify(checkStatus.data[i])+"";
+						
+					}
+					if(confirm('确定要删除这些行么？'+myString)){
+
+						var ids = [];
+						for(i in checkStatus.data){
+							ids.push(checkStatus.data[i].id);
+						}
+						// delUser(ids,reloadTable);
+						delScore(ids,reloadTable);
+
+					}
+
+		  }
+		  }
+	  });
+
+	  let tableHead = [[ //标题栏
+	  			      {checkbox: true}
+	  			    ,{field: 'id', title: 'ID', width: 80}
+	  			    ,{field: 'courseId', title: '课程id', width: 120}
+	  			    ,{field: 'score', title: '成绩', width: 120}
+	  			    ,{field: 'studentId', title: '学生id', width: 120}
+	  			    ,{field: 'updateTime', title: '更新时间', width: 120}
+	  			    ,{field: 'createTime', title: '创建时间', width: 120}
+	  			    ,{field: 'remark', title: '备份', width: 120}
+	  			      ,{field: '', title: '操作',toolbar:'#barUpdateDele'}
+	  			    ]];
+					
+
 	 
+	 var tableIns = table.render({
+	 	elem:'#user',
+		 id:"scoreTableId",
+	 	cols:  tableHead,
+		url:'/api/score/searchpage',
+	 	toolbar: '#allBar' //开启头部工具栏，并为其绑定左侧模板
+	     ,defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+	 		title: '提示'
+	         ,layEvent: 'LAYTABLE_TIPS'
+	         ,icon: 'layui-icon-tips'
+	       }]
+	     ,title: '用户数据表'
+		 ,page:true
+		 ,limit:10
+		 // ,limit:[10,30,50,100]
+		 ,request: {
+		     pageName: 'page' //页码的参数名称，默认：page
+		     ,limitName: 'rows' //每页数据量的参数名，默认：limit
+		 }
+		 ,response: {
+		   statusName: 'code' //规定数据状态的字段名称，默认：code
+		   ,statusCode: 200 //规定成功的状态码，默认：0
+		   ,msgName: 'msg' //规定状态信息的字段名称，默认：msg
+		   ,countName: 'total' //规定数据总数的字段名称，默认：count
+		   ,dataName: 'data' //规定数据列表的字段名称，默认：data
+		 } 
+		//  ,parseData: function(res){ //res 即为原始返回的数据
+		// 	console.log(JSON.stringify(res))
+		// 	return {
+		// 	  "code": res.code, //解析接口状态
+		// 	  "msg": res.msg, //解析提示文本
+		// 	  "count": res.total, //解析数据长度
+		// 	  "data": res.data //解析数据列表
+		// 	};
+		// }
+		
+		});
+	 // });
+	 
+	 
+	 
+	  
+
+	 	
+		
+		
+		// --   独立定义的方法
+
+		function delScore(ids,reloadTableFun){
+
+			$.ajax({
+				url:'/api/score/dels',
+				//data:JSON.stringify( submitData),
+				data: {ids:ids},
+				type:'POST',
+				//dataType: 'json',
+				//contentType: 'application/json',
+				success:function(res){
+					if(res && res.code == 200){
+						layer.msg("id:"+ids+"删除成功");
+
+						if(typeof reloadTableFun == 'function'){
+							reloadTableFun();
+						}
+
+					}else{
+						console.log("id:"+ids+"全部或者部分删除失败",{time:5000});
+						layer.msg("id:"+ids+"全部或者部分删除失败");
+						if(typeof reloadTableFun == 'function'){
+							reloadTableFun();
+						}
+
+					}
+				},
+				error:function(){
+					console.log("id:"+ids+"删除异常",{time:5000});
+				}
+			});
+		}
+
+		function reloadTable(tableId) {
+			if(!tableId){
+				tableId = "scoreTableId";
+			}
+			table.reload(tableId);
+		}
 	});
 	
 	
 
 	</script>
+	
 	</body>
 </html>

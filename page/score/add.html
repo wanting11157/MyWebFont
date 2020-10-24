@@ -15,7 +15,7 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">用户</label>
 			<div class="layui-input-block">
-				<select id="studentId" name="studentId" lay-verify="required">
+				<select id="studentId" name="studentId" lay-verify="required" lay-filter="euser">
 
 				</select>
 
@@ -28,7 +28,7 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">课程</label>
 			<div class="layui-input-block">
-				<select id="courseId" name="courseId" lay-verify="required">
+				<select id="courseId" name="courseId" lay-verify="required" lay-filter="ecourse">
 				</select>
 
 			</div>
@@ -39,11 +39,18 @@
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">成绩</label>
 	    <div class="layui-input-block">
-	      <input type="text" id="score" name="score" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+	      <input type="text" id="score" name="score" required  lay-verify="required" placeholder="请输入成绩" autocomplete="off" class="layui-input">
 	    </div>
 	  </div>
-	  
-	  
+
+		<div class="layui-form-item layui-form-text">
+			<label class="layui-form-label">备注</label>
+			<div class="layui-input-block">
+				<textarea name="remark" placeholder="请输入备注" class="layui-textarea"></textarea>
+			</div>
+		</div>
+
+
 	  <div class="layui-form-item">
 	    <div class="layui-input-block">
 	      <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
@@ -70,17 +77,44 @@
 	  	var form = layui.form;
 	  	var $ = layui.jquery;
 
-		let param = getHrefParam();
+		let param = getHrefParam();// {}
 
-		if(param.studentId  && param.courseId){
-			$.getJSON('/api/score/search',{studentId:param.studentId,courseId:param.courseId},function (res) {
-				if(res.code == 200 && res.data){
-					$("#score").val(res.data[0].score);
-					form.render();
-				}
-			})
+		getScore( param.courseId,param.studentId );
+
+
+		//异步查询数据库当前用户、课程下的成绩
+		function getScore(cid,sid){
+			if(cid && sid) {
+
+				//$.getJSON('/api/score/getByUserAndCourse', {
+				$.getJSON('/api/score/getScore', {
+					studentId: param.studentId,
+					courseId: param.courseId
+				}, function (res) {
+					console.log("res="+res);
+					refreshScore(res)
+				})
+			}else{
+				refreshScore("")
+			}
+		}
+		//刷新成绩输入框
+		function refreshScore(value){
+			let formData=form.val("addScoreForm");
+			formData.score = value?value:"";
+			form.val("addScoreForm",formData);
 		}
 
+		//选择用户
+		form.on('select(euser)',function (data) {
+			param.studentId = data.value;
+			getScore( param.courseId,param.studentId );
+		})
+		//选择课程
+		form.on('select(ecourse)',function (data) {
+			param.courseId = data.value;
+			getScore( param.courseId,param.studentId );
+		})
 
 		//查所有用户(学生)
 		renderSelect("student",param.studentId);
@@ -91,6 +125,7 @@
 	  
 		  
 	  form.on('submit(formDemo)', function(data){
+
 		$.ajax({
 			url:'/api/score/add',
 			data:data.field,
@@ -100,7 +135,7 @@
 				if(res && res.code == 200){
 					layer.msg("输入成绩成功");
 				}else{
-					layer.msg("输入成绩失败");
+					layer.msg("输入成绩失败,有可能是数据库已有这个成绩");
 				}
 				
 			},
@@ -148,7 +183,7 @@
 			let paramStringList = location.search.substring(1).split("&");//["courseId=1","studentId=1"]
 			for (let index in paramStringList) {
 				let p = paramStringList[index].split("=");//["courseId","1"]
-				param[p[0]] = p[1]; // p["courseId"] = "1"     ===  p.courseId = 1;
+				param[p[0]] = p[1]; // param["courseId"] = "1"     ===  param.courseId = 1;
 			}
 		}
 		return param;

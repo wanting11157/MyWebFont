@@ -21,14 +21,14 @@
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">课程id</label>
 	    <div class="layui-input-block">
-	      <input type="int" name="courseId" required  lay-verify="required" placeholder="请输入课程id" autocomplete="on" class="layui-input">
+	      <input type="int" name="courseId" required  readonly="readonly" placeholder="请输入课程id" autocomplete="on" class="layui-input">
 	    </div>
 	  </div>
 	  
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">学生id</label>
 	    <div class="layui-input-block">
-	      <input type="int" name="studentId" required  lay-verify="required" placeholder="请输入学生id" autocomplete="on" class="layui-input">
+	      <input type="int" name="studentId" required  readonly="readonly" placeholder="请输入学生id" autocomplete="on" class="layui-input">
 	    </div>
 	  </div>
 	  
@@ -125,6 +125,8 @@
 				// layer.msg(res);
 				if(res && res.code == 200){
 					layer.msg("更新成功");
+					var index = parent.layer.getFrameIndex(window.name)
+					parent.layer.close(index); //再执行关闭
 					
 				}else{
 					layer.msg("更新失败");
