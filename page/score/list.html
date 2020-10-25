@@ -28,60 +28,8 @@
 		
 	<form class="layui-form" action="" lay-filter="searchForm">
 
-		<div class="layui-row">
-			<div class="layui-col-md4">
-				<div class="layui-form-item">
-					<label class="layui-form-label">成绩id</label>
-					<div class="layui-input-block">
-						<input type="text" name="id" placeholder="请输入成绩id" autocomplete="off" class="layui-input">
-					</div>
-				</div>
-			</div>
-<!--
-id
-course_id
-score
-student_id
-create_time
-update_time
-remark
 
--->
-			<div class="layui-col-md4">
-				<div class="layui-form-item">
-					<label class="layui-form-label">课程id</label>
-					<div class="layui-input-block">
-						<input type="text" name="courseId" required  lay-verify="required" placeholder="请输入课程id" autocomplete="off" class="layui-input">
-					</div>
-				</div>
-			</div>
-
-			<div class="layui-col-md4">
-				<div class="layui-form-item">
-					<label class="layui-form-label">课程名</label>
-					<div class="layui-input-block">
-						<input type="text" name="courseName" required  lay-verify="required" placeholder="请输入课程名" autocomplete="off" class="layui-input">
-					</div>
-				</div>
-			</div>
-		</div>
 		<div class="layui-row">
-			<div class="layui-col-md4">
-				<div class="layui-form-item">
-					<label class="layui-form-label">教师id</label>
-					<div class="layui-input-block">
-						<input type="text" name="teacherId" required  lay-verify="required" placeholder="请输入教师id" autocomplete="off" class="layui-input">
-					</div>
-				</div>
-			</div>
-			<div class="layui-col-md4">
-				<div class="layui-form-item">
-					<label class="layui-form-label">教师名</label>
-					<div class="layui-input-block">
-						<input type="text" name="teacherName" required  lay-verify="required" placeholder="请输入教师名" autocomplete="off" class="layui-input">
-					</div>
-				</div>
-			</div>
 			<div class="layui-col-md4">
 				<div class="layui-form-item">
 					<label class="layui-form-label">成绩</label>
@@ -90,27 +38,33 @@ remark
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="layui-row">
 			<div class="layui-col-md4">
 				<div class="layui-form-item">
-					<label class="layui-form-label">学生id</label>
+					<label class="layui-form-label">课程名</label>
 					<div class="layui-input-block">
-						<input type="text" name="studentId" required  lay-verify="required" placeholder="请输入学生id" autocomplete="off" class="layui-input">
-					</div>
-				</div>
-			</div>
-			<div class="layui-col-md4">
-				<div class="layui-form-item">
-					<label class="layui-form-label">学生名字</label>
-					<div class="layui-input-block">
-						<input type="text" name="studentName" required  lay-verify="required" placeholder="请输入学生名字" autocomplete="off" class="layui-input">
-					</div>
-				</div>
-			</div>
+						<select id="courseId" name="courseId" lay-verify="required" lay-filter="ecourse">
+						</select>
 
+					</div>
+				</div>
+
+			</div>
+			<div class="layui-col-md4">
+				<div class="layui-form-item">
+					<label class="layui-form-label">用户名</label>
+					<div class="layui-input-block">
+						<select id="studentId" name="studentId" lay-verify="required" lay-filter="euser">
+
+						</select>
+
+
+
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="layui-row">
+
 			<div class="layui-col-md4">
 				<div class="layui-form-item">
 					<label class="layui-form-label">更新时间</label>
@@ -135,7 +89,9 @@ remark
 					</div>
 				</div>
 			</div>
+
 		</div>
+
 
 	</form>
 	 
@@ -200,6 +156,22 @@ remark
 			elem: '#createTime' //指定元素
 			// type: 'datetime'
 		})
+
+		form.on('select(euser)',function (data) {
+			studentId = data.value;
+
+		})
+		//选择课程
+		form.on('select(ecourse)',function (data) {
+			courseId = data.value;
+
+		})
+
+		//查所有用户(学生)
+		renderSelect("student",studentId);
+		renderSelect("course",courseId);
+		//查所有课程
+
 
 	  // 监听表格行间操作事件
 	  table.on('tool(userTable)',function(obj){
@@ -330,15 +302,12 @@ remark
 	  let tableHead = [[ //标题栏
 	  			      {checkbox: true}
 	  			    ,{field: 'id', title: 'ID', width: 80}
-	  			    ,{field: 'courseId', title: '课程id', width: 120}
 		            ,{field: 'courseName', title: '课程名', width: 120}
-		            ,{field: 'teacherId', title: '教师id', width: 120}
 		            ,{field: 'teacherName', title: '教师名', width: 120}
 	  			    ,{field: 'score', title: '成绩', width: 120}
-	  			    ,{field: 'studentId', title: '学生id', width: 120}
 		            ,{field: 'studentName', title: '学生姓名', width: 120}
-	  			    ,{field: 'updateTime', title: '更新时间', width: 120}
-	  			    ,{field: 'createTime', title: '创建时间', width: 120}
+	  			    ,{field: 'updateTime', title: '更新时间', width: 180}
+	  			    ,{field: 'createTime', title: '创建时间', width: 180}
 	  			    ,{field: 'remark', title: '备份', width: 120}
 	  			      ,{field: '', title: '操作',toolbar:'#barUpdateDele'}
 	  			    ]];
@@ -430,6 +399,33 @@ remark
 				tableId = "scoreTableId";
 			}
 			table.reload(tableId);
+		}
+
+		function renderSelect(type,defaultOptionValue) {
+			let urlType = type;
+			if(urlType == "student"){
+				urlType = "user";
+			}
+			$.ajax({
+				url:'/api/'+urlType+'/search',
+				data: {rows:1000},
+				type:'POST',
+				success:function(res){
+					if(res.code == 200){
+						let items = res.data;
+						let options = '<option value="">-请选择-</option>';
+						for(let i = 0;i<items.length;i++ ){
+							let item = items[i];
+							let selected = '';
+							if(item.id == defaultOptionValue){
+								selected = ' selected = "selected" ';
+							}
+							options+= '<option value="'+item.id+'" '+selected+'>'+item.name+'</option>';
+						}
+						$("#"+type+"Id").html(options);
+						form.render("select", "searchForm");
+					}
+				}});
 		}
 	});
 	
