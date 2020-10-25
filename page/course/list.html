@@ -47,14 +47,7 @@
 				</div>
 			</div>
 
-			<div class="layui-col-md4">
-				<div class="layui-form-item">
-					<label class="layui-form-label">教师id</label>
-					<div class="layui-input-block">
-						<input type="text" name="teacherId" required  lay-verify="required" placeholder="请输入教师id" autocomplete="off" class="layui-input">
-					</div>
-				</div>
-			</div>
+
 		</div>
 		<div class="layui-row">
 			<div class="layui-col-md4">
@@ -217,22 +210,14 @@
 			    type:2, 
 				area:['100%','100%'],
 				end: function(index, layero){
-					table.reload("courseTableId")
+					tableIns.reload({
+						page: {
+							curr: tableIns.config.page.pages //重新从第 1 页开始
+						}
+					});
 				},
-			    content: './add.html',
-				  cancel: function(index, layero){
-					  if(confirm('确定要关闭么')){ //只有当点击confirm框的确定时，该层才会关闭
-						  layer.close(index)
-						  tableIns.reload({
-							  page: {
-								  curr: tableIns.config.page.pages //重新从第 1 页开始
-							  }
-						  });
+			    content: './add.html'
 
-
-					  }
-
-				  },
 
 			    //content: $('#addUserForm') //这里content是一个普通的String
 				//<div id="tong" class="hide" style="width: 670px;height: 320px;display: none;">
@@ -290,7 +275,6 @@
 	  			      {checkbox: true}
 	  			     ,{field: 'id', title: 'ID', width: '5%'}
 	  			     ,{field: 'name', title: '课程名', width: '8%'}
-	  			     ,{field: 'teacherId', title: '教师id', width: '8%'}
 	  			     ,{field: 'teacherName', title: '教师姓名', width: '8%'}
 	  			     ,{field: 'college', title: '院系', width: '8%'}
 	  			     ,{field: 'team', title: '学期', width: '8%'}

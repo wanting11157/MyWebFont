@@ -231,22 +231,14 @@
 				  type:2,
 				  area:['100%','100%'],
 				  end: function(){
-					  table.reload("scoreTableId")
+					  tableIns.reload({
+						  page: {
+							  curr: tableIns.config.page.pages //重新从第 1 页开始
+						  }
+					  });
 				  },
 				  content: './add.html',
-				  cancel: function(index, layero){
-					  if(confirm('确定要关闭么')){ //只有当点击confirm框的确定时，该层才会关闭
-						  layer.close(index)
-						  tableIns.reload({
-							  page: {
-								  curr: tableIns.config.page.pages //重新从第 1 页开始
-							  }
-						  });
 
-
-					  }
-
-				  },
 
 				  //content: $('#addUserForm') //这里content是一个普通的String
 				  //<div id="tong" class="hide" style="width: 670px;height: 320px;display: none;">
