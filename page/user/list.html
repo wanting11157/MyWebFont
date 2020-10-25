@@ -8,60 +8,135 @@
 		
 	</head>
 	<body>
-	<div style="padding: 10px;">
-		
-	<form class="layui-form" action="" lay-filter="searchForm">
-	  
-	  <div class="layui-form-item">
-	    <label class="layui-form-label">用户id</label>
-	    <div class="layui-input-block">
-	      <input type="text" name="id" placeholder="请输入用户id" autocomplete="off" class="layui-input">
-	    </div>
-	  </div>
-<!--	  -->
-<!--	  <div class="layui-form-item">-->
-<!--	    <div class="layui-input-block">-->
-<!--	      <button class="layui-btn" lay-submit lay-filter="search">全部查询</button>-->
-<!--	     -->
-<!--	    </div>-->
-<!--	  </div>-->
-	</form>
-	 
-	 </div>
-	 
-	 <table id="user" lay-filter="userTable"> </table>
-	 
+    <ul class="layui-nav" lay-filter="">
+        <li class="layui-nav-item"><a href="">用户管理</a></li>
+        <li class="layui-nav-item"><a href='../course/list.html'>课程管理</a></li>
+        <li class="layui-nav-item"><a href='../score/list.html'>成绩管理</a></li>
+        <li class="layui-nav-item">
+            <a href="javascript:;">解决方案</a>
+            <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                <dd><a href="">移动模块</a></dd>
+                <dd><a href="">后台模版</a></dd>
+                <dd><a href="">电商平台</a></dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item"><a href="">帮助</a></li>
+    </ul>
+    <div class="layui-card">
+        <div class="layui-card-header">用户管理</div>
+        <div class="layui-card-body">
+<!--	<div style="padding: 10px;">-->
 
-	  
-	   <!-- 表上的工具条模板-->
-	   <!-- <div class="layui-btn-group" id="allBar">
-		 <button type="button" class="layui-btn layui-btn-primary" lay-event="add">新增</button>
-	     <button type="button" class="layui-btn layui-btn-primary" lay-event="update">修改</button>
-	     <button type="button" class="layui-btn layui-btn-primary" lay-event="del">删除</button>
-	   
-	   </div> -->
-    <!-- 表头的工具条模板 -->
-	   <script type="text/html" id="allBar">
-		 <a class="layui-btn layui-btn-primary" lay-event="search">查询</a>
-		 <a class="layui-btn layui-btn-primary" lay-event="courseManager">课程管理</a>
-		 <a class="layui-btn layui-btn-primary" lay-event="scoreManager">成绩管理</a>
-		 <a class="layui-btn layui-btn-primary" lay-event="add">新增</a>
-	     <a class="layui-btn layui-btn-primary" lay-event="update">修改</a>
-	     <a class="layui-btn layui-btn-primary" lay-event="del">删除</a>
-	   </script>
-	    <!-- 行间的工具条模板 -->
-		
-	<!-- <script type="text/html" class="layui-btn-group" id="barUpdateDele">
-			 
-	  <button type="button" class="layui-btn layui-btn-primary" lay-event="updateUser">修改</button>
-	  <button type="button" class="layui-btn layui-btn-primary" lay-event="delUser">删除</button>
-	
-	</script> -->
-	
-	<script type="text/html" id="barUpdateDele">
-	   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="updateUser">修改</a>
-	   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="delUser">删除</a>
+        <form class="layui-form" action="" lay-filter="searchForm">
+
+    <!--        <div class="layui-container">-->
+    <!--            常规布局（以中型屏幕桌面为例）：-->
+                <div class="layui-row">
+                    <div class="layui-col-md4">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户id</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="id" placeholder="请输入用户id" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">姓名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="name" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">专业</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="major" required  lay-verify="required" placeholder="请输入专业" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-row">
+                    <div class="layui-col-md4">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">学号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="haoma" required  lay-verify="required" placeholder="请输入学号" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                     </div>
+                    <div class="layui-col-md4">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">性别</label>
+                            <div class="layui-input-block">
+
+                                <input type="radio" name="sex" value="1" title="男">
+                                <input type="radio" name="sex" value="2" title="女">
+                                <input type="radio" name="sex" value="0" title="全部" checked>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">院系</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="college" required  lay-verify="required" placeholder="请输入院系" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="layui-row">
+                <div class="layui-col-md4">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">更新时间</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" id="updateTime" name="updateTime" placeholder="请输入更新时间">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md4">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">创建时间</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" id="createTime" name="createTime" placeholder="请输入创建时间">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md4">
+                    <div class="layui-form-item">
+                            <label class="layui-form-label">备注</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="remark" required  lay-verify="required" placeholder="请输入备注" autocomplete="off" class="layui-input">
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+        </div>
+    </div>
+<!--    </div>-->
 	 
+	    <table id="user" lay-filter="userTable"> </table>
+
+
+    <script type="text/html" id="allBar">
+        <a class="layui-btn layui-btn-normal" lay-event="search">查询</a>
+        <a class="layui-btn " lay-event="add">新增</a>
+        <a class="layui-btn  layui-btn-warm" lay-event="update">修改</a>
+        <a class="layui-btn  layui-btn-danger" lay-event="del">删除</a>
+
+    </script>
+    <!-- 行间的工具条模板 -->
+
+
+    <script type="text/html" id="barUpdateDele">
+        <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="updateUser">修改</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delUser">删除</a>
+
     </script>
 	 
 	 
@@ -71,13 +146,22 @@
 		
 		
 	//Demo
-	layui.use(['form','jquery','table','laypage'], function(){
+	layui.use(['form','jquery','table','laydate','element'], function(){
 	  var form = layui.form;
 	  var $ = layui.jquery;
 	  var table = layui.table;
-	  var laypage = layui.laypage;
-	  
-	  
+	  var laydate = layui.laydate;
+        var element = layui.element;
+
+	  laydate.render({
+            elem: '#updateTime'//指定元素
+          // type: 'datetime'
+        })
+
+        laydate.render({
+            elem: '#createTime' //指定元素
+            // type: 'datetime'
+        })
 	  // 监听表格行间操作事件
 	  table.on('tool(userTable)',function(obj){
 		  
@@ -124,26 +208,21 @@
 		  if(data.event == 'search'){//查询  表格内容
 		      console.log(form.val('searchForm'))
               table.reload('idTest', {
-                  url: '/api/user/getById',
+                  url: '/api/user/search',
                   where: form.val('searchForm')
                   //设定异步数据接口的额外参数
-                  , parseData: function (res) { //res 即为原始返回的数据
-                      console.log(JSON.stringify(res))
-                      return {
-                          "code": res.code, //解析接口状态
-                          "msg": res.msg, //解析提示文本
-                          // "count": 1, //解析数据长度
-                           "data": [res.data] //解析数据列表
-                      };
-                  }
+                  // , parseData: function (res) { //res 即为原始返回的数据
+                  //     console.log(JSON.stringify(res))
+                  //     return {
+                  //         "code": res.code, //解析接口状态
+                  //         "msg": res.msg, //解析提示文本
+                  //         // "count": 1, //解析数据长度
+                  //          "data": [res.data] //解析数据列表
+                  //     };
+                  // }
 
               });
-          }else if(data.event == 'courseManager'){//跳转到课程列表
-                location.href = '../course/list.html';
-          }else if(data.event == 'scoreManager'){//跳转到成绩列表
-              location.href = '../score/list.html';
-          }else
-		  if(data.event == 'add'){
+          }else if(data.event == 'add'){
 			  layer.open({
 				title:'新增用户',
 			    type:2, 
@@ -226,12 +305,12 @@
 	  			     ,{field: 'name', title: '姓名', width: '8%'}
 	  			     ,{field: 'major', title: '专业', width: '8%'}
 	  			     ,{field: 'haoma', title: '学号', width: '8%'}
-	  			     ,{field: 'sex', title: '性别', width: '8%',templet:(row)=>{  return row.sex==1?'女':'男'}}
+	  			     ,{field: 'sex', title: '性别', width: '5%',templet:(row)=>{  return row.sex==1?'男':'女'}}
 	  			     ,{field: 'college', title: '院系', width: '8%'}
 	  			     ,{field: 'password', title: '密码', width: '8%'}
-	  			     ,{field: 'updateTime', title: '更新时间', width: '8%'}
-	  			     ,{field: 'createTime', title: '创建时间', width: '8%'}
-	  			     ,{field: 'remark', title: '备份', width: '8%'}
+	  			     ,{field: 'updateTime', title: '更新时间', width: '14%'}
+	  			     ,{field: 'createTime', title: '创建时间', width: '14%'}
+	  			     ,{field: 'remark', title: '备注', width: '8%'}
 	  			      ,{field: '', title: '操作',toolbar:'#barUpdateDele'}
 	  			    ]];
 					
