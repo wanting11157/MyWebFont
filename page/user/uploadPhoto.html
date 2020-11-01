@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>上传个人头像</title>
+    <link rel="stylesheet" href="../../iframe/dist/css/layui.css" />
+
+</head>
+<body>
+<blockquote class="layui-elem-quote">如果您不想上传头像，可以点击略过=>
+    <button class="layui-btn layui-btn-warm" lay-submit lay-filter="formDemo">略过</button>
+</blockquote>
+
+<br><br>
+<div class="layui-upload">
+    <button type="button" class="layui-btn layui-btn-normal" id="testList">选择图片</button>
+    <div class="layui-upload-list">
+        <table class="layui-table">
+            <thead>
+            <tr><th>文件名</th>
+                <th>大小</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr></thead>
+            <tbody id="demoList"></tbody>
+        </table>
+    </div>
+    <button type="button" class="layui-btn" id="testListAction">开始上传头像</button>
+</div>
+
+<div>
+<!--    <label class="layui-form-label">上传个人头像</label>-->
+<!--    <div class="layui-upload">-->
+<!--        <button type="button" class="layui-btn" id="test1">上传图片</button>-->
+        <div class="layui-upload-list">
+            <img class="layui-upload-img" id="demo1">
+<!--            <p id="demoText"></p>-->
+        </div>
+<!--    </div>-->
+</div>
+
+
+
+<script src="../../iframe/dist/layui.all.js"></script>
+<script>
+    //Demo
+    layui.use(['form','jquery','upload'], function(){
+
+        var form = layui.form;
+        var $ = layui.jquery;
+        var upload = layui.upload;
+
+        var myid = location.href.split("=")[1];
+        if(!myid){
+            layer.msg('您没有要上传用户头像的那个用户的id', {
+                time: 5000
+            }, function(){
+                //do something
+                var index1 = parent.layer.getFrameIndex(window.name)
+                console.log("index:"+index1);
+                parent.layer.close(index1);
+            })
+
+        }
+
+
+        var demoListView = $('#demoList')
+            ,uploadListIns = upload.render({
+            elem: '#testList'
+            ,url: '/api/user/uploadFile' //改成您自己的上传接口
+            ,accept: 'images'
+            ,data: {id: myid}
+            ,auto: false
+            ,bindAction: '#testListAction'
+            ,choose: function(obj){
+                var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                //读取本地文件
+                obj.preview(function(index, file, result){
+                    var tr = $(['<tr id="upload-'+ index +'">'
+                        ,'<td>'+ file.name +'</td>'
+                        ,'<td>'+ (file.size/1024).toFixed(1) +'kb</td>'
+                        ,'<td>等待上传</td>'
+                        ,'<td>'
+                        ,'<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+                        ,'<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+                        ,'</td>'
+                        ,'</tr>'].join(''));
+                    $('#demo1').attr('src', result); //图片链接（base64）
+                    //单个重传
+                    tr.find('.demo-reload').on('click', function(){
+                        obj.upload(index, file);
+                    });
+
+                    //删除
+                    tr.find('.demo-delete').on('click', function(){
+                        delete files[index]; //删除对应的文件
+                        tr.remove();
+                        uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                    });
+
+                    demoListView.append(tr);
+                });
+            }
+            ,done: function(res, index, upload){
+
+                if(res.code ==  200){ //上传成功
+                    var tr = demoListView.find('tr#upload-'+ index)
+                        ,tds = tr.children();
+                    tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+                    tds.eq(3).html(''); //清空操作
+                    // $('#demo1').attr('src', '\\resourses\\upload\\images\\user\\'+res.data);
+                    return delete this.files[index]; //删除文件队列已经上传成功的文件
+                }
+                this.error(index, upload);
+            }
+            ,error: function(index, upload){
+                var tr = demoListView.find('tr#upload-'+ index)
+                    ,tds = tr.children();
+                tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+                tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+            }
+        });
+
+        //普通图片上传
+        // var uploadInst = upload.render({
+        //     elem: '#test1'
+        //     ,url: '/api/user/uploadFile'  //改成您自己的上传接口
+        //     ,before: function(obj){
+        //         //预读本地文件示例，不支持ie8
+        //         // obj.preview(function(index, file, result){
+        //         // 	$('#demo1').attr('src', result); //图片链接（base64）
+        //         // });
+        //     }
+        //     ,done: function(res){
+        //         //如果上传失败
+        //         if(res.code ==  500){
+        //             return layer.msg('上传失败');
+        //         }else {
+        //             //上传成功
+        //             $('#demo1').attr('src', '\\resourses\\upload\\images\\user\\'+res.data);
+        //         }
+        //     }
+        //     ,error: function(){
+        //         //演示失败状态，并实现重传
+        //         var demoText = $('#demoText');
+        //         demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+        //         demoText.find('.demo-reload').on('click', function(){
+        //             uploadInst.upload();
+        //         });
+        //     }
+        // });
+
+        //监听提交
+
+        // form.on('submit(formDemo)', function(data){
+        //     layer.msg(JSON.stringify(data.field));
+        //
+        //     $.ajax({
+        //         url:'/api/user/add',
+        //         data:data.field,
+        //         type:'POST',
+        //         success:function(res){
+        //             // layer.msg(res);
+        //             if(res && res.code == 200){
+        //                 layer.msg("注册成功");
+        //                 var index = parent.layer.getFrameIndex(window.name)
+        //                 console.log("index:"+index);//先得到当前iframe层的索引
+        //                 parent.layer.close(index); //再执行关闭
+        //             }else{
+        //                 layer.msg("注册失败");
+        //             }
+        //
+        //         },
+        //         error:function(){
+        //             layer.msg("注册异常");
+        //         }
+        //     })
+        //
+        //
+        //
+        //     return false;
+        // });
+    });
+</script>
+</body>
+</html>

@@ -39,7 +39,7 @@
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">成绩</label>
 	    <div class="layui-input-block">
-	      <input type="text" id="score" name="score" required  lay-verify="required" placeholder="请输入成绩" autocomplete="off" class="layui-input">
+	      <input type="text" id="score" name="score" required  lay-verify="score" placeholder="请输入成绩" autocomplete="off" class="layui-input">
 	    </div>
 	  </div>
 
@@ -76,6 +76,16 @@
 		
 	  	var form = layui.form;
 	  	var $ = layui.jquery;
+
+		form.verify({
+			score: (value,item)=>{
+			 if(! /^[0-9]+([.][0-9]+){0,1}$/.test(value) ){
+			 	return "只能输入数字和一位小数";
+			 }
+			 }
+
+		});
+
 
 		let param = getHrefParam();// {}
 

@@ -119,8 +119,15 @@
         </div>
     </div>
 <!--    </div>-->
-	 
-	    <table id="user" lay-filter="userTable"> </table>
+
+<!--    <div class="layui-progress layui-progress-big" lay-filter="demo" lay-showPercent="true" id="barId" >-->
+<!--        <div class="layui-progress-bar" lay-percent="0%"></div>-->
+<!--    </div>-->
+    <button class="layui-btn layui-btn-primary" id="importExcel">导入Excel文件</button>
+<!--    <button class="layui-btn layui-btn-primary" id="exportExcel">导出为Excel文件</button>-->
+
+
+    <table class="layui-hide" id="user" lay-filter="userTable"> </table>
 
 
     <script type="text/html" id="allBar">
@@ -128,7 +135,7 @@
         <a class="layui-btn " lay-event="add">新增</a>
         <a class="layui-btn  layui-btn-warm" lay-event="update">修改</a>
         <a class="layui-btn  layui-btn-danger" lay-event="del">删除</a>
-
+        <a class="layui-btn layui-btn-primary" lay-event="exportExcel">导出为Excel文件</a>
     </script>
     <!-- 行间的工具条模板 -->
 
@@ -143,15 +150,49 @@
 	 
 	<script src="../../iframe/dist/layui.all.js"></script>
 	<script >
-		
+
+        function showPhoto(phoPath,id) {
+            console.log(phoPath,id);
+                layer.open({
+                    title: "头像显示,用户的id为"+id,
+                    type: 1,
+
+                    area: ['800px', '500px'],
+
+                    content: '<img src="../../resources/upload/images/user/' + phoPath + '"  />'
+                });
+
+        }
 		
 	//Demo
-	layui.use(['form','jquery','table','laydate','element'], function(){
+	layui.use(['form','jquery','table','laydate','element','upload'], function(){
 	  var form = layui.form;
 	  var $ = layui.jquery;
 	  var table = layui.table;
 	  var laydate = layui.laydate;
-        var element = layui.element;
+	  var element = layui.element;
+	  var upload = layui.upload;
+
+        var uploadInst = upload.render({
+            elem: '#importExcel'
+            ,url: '/api/user/importExcel'
+            ,accept: 'file'
+            // ,progress: function(n, elem) {
+            //     document.getElementById('barId').style.display="";
+            //     var percent = n + '%' //获取进度百分比
+            //     element.progress('demo', percent); //可配合 layui 进度条元素使用
+            //
+            //     //以下系 layui 2.5.6 新增
+            //     console.log(elem); //得到当前触发的元素 DOM 对象。可通过该元素定义的属性值匹配到对应的进度条。
+            // }
+            ,done: function(res){
+                //上传完毕回调
+                // $('#userImg').val(res.data);
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
 
 	  laydate.render({
             elem: '#updateTime'//指定元素
@@ -287,25 +328,49 @@
 
 		  }
 		  }
+          if(data.event == 'exportExcel'){
+              let url = "/api/user/exportFile";
+              //window.open(url,'download');
+              window.open(url,'_blank');
+
+          }
+
+
+
 	  });
 
-	  table.on('edit(userTable)',function (obj) {
-
-	  })
+        //监听行双击事件
+        table.on('rowDouble(userTable)', function(obj){
+            console.log(obj.tr) //得到当前行元素对象
+            console.log(obj.data) //得到当前行数据
+            //obj.del(); //删除当前行
+            //obj.update(fields) //修改当前行数据
+            let row = obj.data;// row = {id:1,photo:'fjwoajfeowwa.jpg'}
+            let photo = row.photo;
+            if(photo) {
+                showPhoto(row.photo,row.id);
+            }else {
+                layer.msg('没有头像')
+            }
+        });
 
 	  let tableHead = [[ //标题栏
-	  			      {checkbox: true}
-	  			     ,{field: 'id', title: 'ID', width: '5%'}
-	  			     ,{field: 'name', title: '姓名', width: '8%'}
-	  			     ,{field: 'major', title: '专业', width: '8%'}
-	  			     ,{field: 'haoma', title: '学号', width: '8%'}
-	  			     ,{field: 'sex', title: '性别', width: '5%',templet:(row)=>{  return row.sex==1?'男':'女'}}
-	  			     ,{field: 'college', title: '院系', width: '8%'}
-	  			     ,{field: 'password', title: '密码', width: '8%'}
-	  			     ,{field: 'updateTime', title: '更新时间', width: '14%'}
-	  			     ,{field: 'createTime', title: '创建时间', width: '14%'}
-	  			     ,{field: 'remark', title: '备注', width: '8%'}
-	  			      ,{field: '', title: '操作',toolbar:'#barUpdateDele'}
+	  			      // {checkbox: true}
+                      {type:'checkbox', fixed: 'left'}
+	  			     ,{field: 'id', title: 'ID'}
+	  			     ,{field: 'name', title: '姓名'}
+                      ,{field: 'photo', title: '头像',templet:function(d){
+                          return (!d.photo)?'<span style="color:red">无</span>':'有'
+                       }}
+                     ,{field: 'major', title: '专业',width:100}
+	  			     ,{field: 'haoma', title: '学号',width:100}
+	  			     ,{field: 'sex', title: '性别',templet:(row)=>{  return row.sex==1?'男':'女'}}
+	  			     ,{field: 'college', title: '院系',width:100}
+	  			     ,{field: 'password', title: '密码',width:100}
+	  			     ,{field: 'updateTime', title: '更新时间',width:200}
+	  			     ,{field: 'createTime', title: '创建时间',width:200}
+	  			     ,{field: 'remark', title: '备注'}
+	  			      ,{field: '', title: '操作',fixed: 'right',width:150,toolbar:'#barUpdateDele'}
 	  			    ]];
 					
 
@@ -314,8 +379,9 @@
 		 id: 'idTest',
 	 	elem:'#user',
 	 	cols:  tableHead,
-		url:'/api/user/search',
-	 	toolbar: '#allBar' //开启头部工具栏，并为其绑定左侧模板
+		url:'/api/user/search'
+         ,cellMinWidth: 80
+	 	,toolbar: '#allBar' //开启头部工具栏，并为其绑定左侧模板
 	     ,defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
 	 		title: '提示'
 	         ,layEvent: 'LAYTABLE_TIPS'
@@ -345,7 +411,7 @@
 		// 	  "data": res.data //解析数据列表
 		// 	};
 		// }
-		
+
 		});
 	 // });
 	 

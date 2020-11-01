@@ -21,14 +21,14 @@
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">教师姓名</label>
 	    <div class="layui-input-block">
-	      <input type="text" name="teacherName" required  lay-verify="required" placeholder="请输入教师姓名" autocomplete="off" class="layui-input">
+	      <input type="text" name="teacherName" required  lay-verify="teacherName" placeholder="请输入教师姓名" autocomplete="off" class="layui-input">
 	    </div>
 	  </div>
 	  
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">院系</label>
 	    <div class="layui-input-block">
-	      <input type="text" name="college" required  lay-verify="required" placeholder="请输入院系(这是哪个院系开的课)" autocomplete="off" class="layui-input">
+	      <input type="text" name="college" required  lay-verify="college" placeholder="请输入院系(这是哪个院系开的课)" autocomplete="off" class="layui-input">
 	    </div>
 	  </div>
 	  
@@ -79,7 +79,17 @@
 		
 	  var form = layui.form;
 	  var $ = layui.jquery;
-	  
+
+		form.verify({
+			teacherName:[
+				/^[\u4e00-\u9fa5]{2,}$/
+				,'只能输入汉字'
+			]
+			,college:[
+				/^[\u4e00-\u9fa5]{2,}$/
+				,'只能输入汉字'
+			]
+		});
 	  //监听提交
 	  
 		  

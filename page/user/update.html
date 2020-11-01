@@ -21,14 +21,14 @@
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">姓名</label>
 	    <div class="layui-input-block">
-	      <input type="text" name="name" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+	      <input type="text" name="name" required  lay-verify="username" placeholder="请输入姓名" autocomplete="off" class="layui-input">
 	    </div>
 	  </div>
 	  
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">学号</label>
 	    <div class="layui-input-block">
-	      <input type="text" name="haoma" required  lay-verify="required" placeholder="请输入学号" autocomplete="off" class="layui-input">
+	      <input type="text" name="haoma" required  lay-verify="xuehao" placeholder="请输入学号" autocomplete="off" class="layui-input">
 	    </div>
 	  </div>
 	  
@@ -48,7 +48,7 @@
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">专业</label>
 	    <div class="layui-input-block">
-	      <input type="text" name="major" required  lay-verify="required" placeholder="请输入专业" autocomplete="off" class="layui-input">
+	      <input type="text" name="major" required  lay-verify="zhuanye" placeholder="请输入专业" autocomplete="off" class="layui-input">
 	    </div>
 	  </div>
 	  
@@ -56,7 +56,7 @@
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">院系</label>
 	    <div class="layui-input-block">
-	      <input type="text" name="college" required  lay-verify="required" placeholder="请输入院系" autocomplete="off" class="layui-input">
+	      <input type="text" name="college" required  lay-verify="college" placeholder="请输入院系" autocomplete="off" class="layui-input">
 	    </div>
 	  </div>
 	  <!-- private int id;
@@ -69,7 +69,7 @@
 	  <div class="layui-form-item">
 	    <label class="layui-form-label">密码</label>
 	    <div class="layui-input-inline">
-	      <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+	      <input type="password" name="password" required lay-verify="pass" placeholder="请输入密码" autocomplete="off" class="layui-input">
 	    </div>
 	    <div class="layui-form-mid layui-word-aux">辅助文字</div>
 	  </div>
@@ -82,30 +82,163 @@
 	      <textarea name="remark" placeholder="请输入内容" class="layui-textarea"></textarea>
 	    </div>
 	  </div>
+
+		<br>
+		<div class="layui-form-item">
+			<label class="layui-form-label"></label>
+			<input type="checkbox" name="" lay-filter="checkbox" title="我不想上传个人头像">
+		</div>
+
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">头像路径</label>
+			<div class="layui-input-block">
+				<input type="text" id="userImg" name="photo" required class="layui-input" style="width: 400px;" readonly="readonly">
+				<div class="layui-progress layui-progress-big" lay-filter="demo" lay-showPercent="true" id="barId" style="display: none;">
+					<div class="layui-progress-bar" lay-percent="0%"></div>
+				</div>
+				<!--				</div>-->
+
+				<button type="button" class="layui-btn layui-btn-primary" id="test1">
+					<i class="layui-icon">&#xe67c;</i>上传图片
+				</button>
+				<button type="button" class="layui-btn layui-btn-primary" id="downloadId" onclick="download1()">下载我的头像</button>
+				<button type="button" class="layui-btn layui-btn-primary" id="previewId" onclick="preview()">预览</button>
+			</div>
+		</div>
+
+
+
+		<br>
 	  <div class="layui-form-item">
 	    <div class="layui-input-block">
-	      <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+	      <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">我已经填好了</button>
 	      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
 	    </div>
 	  </div>
 	</form>
 	 
 	 </div>
-	 
+	 <div style="display: none;">
+		 <iframe name="download" id="download"></iframe>
+	 </div>
 	 
 	<script src="../../iframe/dist/layui.all.js"></script>
 	<script>
-	//Demo
-	layui.use(['form','jquery'], function(){
-	  var form = layui.form;
-	  var $ = layui.jquery;
-	  
-	  var myid = location.href.split("=")[1];
-	  if(!myid){
-		layer.msg("您没有输入要更新的那个用户的id");
-		return false;
+	function preview() {
+		let userImg = document.getElementById('userImg').value;
+		if (userImg == null || userImg == "") {
+			layer.msg("您没有图片，无法预览");
+		} else {
+			layer.open({
+				title: "头像预览",
+				type: 1,
+
+				area: ['800px', '500px'],
+
+				content: '<img src="../../resources/upload/images/user/' + userImg + '"  />'
+			});
 		}
-	  var submitData = {id:myid};
+	}
+	function download1() {
+		console.log(1)
+		let userImg = document.getElementById('userImg').value;
+		if (userImg == null || userImg == "") {
+			layer.msg("您没有图片，无法下载");
+		} else {
+			let url = "/api/user/downloadFile?fileName="+userImg;
+			//window.open(url,'download');
+			window.open(url,'_blank');
+
+		}
+	}
+	//Demo
+	layui.use(['form','jquery','upload','element'], function(){
+
+	  	var form = layui.form;
+	  	var $ = layui.jquery;
+		var upload = layui.upload;
+		var element = layui.element;
+
+		form.on('checkbox(checkbox)', function(data){
+			if(data.elem.checked==true){
+				$('#userImg').addClass("layui-btn-disabled").attr("disabled",true);
+				$('#userImg').val('');
+				$('#test1').addClass("layui-btn-disabled").attr("disabled",true);
+				$('#previewId').addClass("layui-btn-disabled").attr("disabled",true);
+				element.progress('demo', '0%');
+				document.getElementById('barId').style.display="none";
+			}
+			else{
+				$('#userImg').removeClass("layui-btn-disabled").attr("disabled",false);
+				$('#test1').removeClass("layui-btn-disabled").attr("disabled",false);
+				$('#previewId').removeClass("layui-btn-disabled").attr("disabled",false);
+			}
+			// console.log(data.elem); //得到checkbox原始DOM对象
+			// console.log(data.elem.checked); //是否被选中，true或者false
+			// console.log(data.value); //复选框value值，也可以通过data.elem.value得到
+			// console.log(data.othis); //得到美化后的DOM对象
+		});
+
+		var uploadInst = upload.render({
+			elem: '#test1' //绑定元素
+			,url: '/api/user/uploadFile'
+			,progress: function(n, elem) {
+				document.getElementById('barId').style.display="";
+				var percent = n + '%' //获取进度百分比
+				element.progress('demo', percent); //可配合 layui 进度条元素使用
+
+				//以下系 layui 2.5.6 新增
+				console.log(elem); //得到当前触发的元素 DOM 对象。可通过该元素定义的属性值匹配到对应的进度条。
+			}
+			,done: function(res){
+				//上传完毕回调
+				$('#userImg').val(res.data);
+			}
+			,error: function(){
+				//请求异常回调
+			}
+		});
+
+		form.verify({
+			username:(value,item)=>{
+				console.log("开始验证用户名....." + value)
+				let ok = true;
+				if(! /^[\u4e00-\u9fa5]{2,}$/.test(value)  ){
+					ok = false;
+				}
+
+
+				if(!ok) {
+					return '只能输入汉字';
+				}
+
+				//没有return 就是验证通过
+			}
+
+			,xuehao:[
+				/^\d{1,20}$/
+				,'只能输入1~20位的数字'
+			]
+			,zhuanye:[
+				/^[\u4e00-\u9fa5]{2,}$/
+				,'只能输入汉字'
+			]
+			,yuanxi:[
+				/^[\u4e00-\u9fa5]{2,}$/
+				,'只能输入汉字'
+			]
+			,pass:[
+				/^[\S]{6,12}$/
+				,'密码必须6到12位，且不能出现空格'
+			]
+		});
+	  	var myid = location.href.split("=")[1];
+	  	if(!myid){
+			layer.msg("您没有输入要更新的那个用户的id");
+			return false;
+		}
+	  	var submitData = {id:myid};
 	  
 	  // layer.load();
 	  
@@ -167,7 +300,11 @@
 		
 	      return false;
 	  });
+
+
 	});
+
+
 	</script>
 	</body>
 </html>
