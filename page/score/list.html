@@ -97,6 +97,17 @@
 	 
 	 </div>
 	</div>
+
+	<div class="layui-row">
+		<div class="layui-col-md2">
+			<button class="layui-btn layui-btn-primary" id="importExcel">导入Excel文件</button>
+		</div>
+		<div class="layui-col-md10" align="center">
+			<div class="layui-progress layui-progress-big" lay-filter="demo" lay-showPercent="true" id="barId" style="display: none;">
+				<div class="layui-progress-bar" lay-percent="0%"></div>
+			</div>
+		</div>
+	</div>
 	 
 	 <table id="user" lay-filter="userTable"> </table>
 	 
@@ -140,12 +151,47 @@
 		
 		
 	//Demo
-	layui.use(['form','jquery','table','laydate','element'], function(){
+	layui.use(['form','jquery','table','laydate','element','upload'], function(){
 		var form = layui.form;
 		var $ = layui.jquery;
 		var table = layui.table;
 		var laydate = layui.laydate;
 		var element = layui.element;
+		var upload = layui.upload;
+
+		var uploadInst = upload.render({
+			elem: '#importExcel'
+			,url: '/api/score/importExcel'
+			,accept: 'file'
+			,progress: function(n, elem) {
+				document.getElementById('barId').style.display="";
+				var percent = n + '%' //获取进度百分比
+				element.progress('demo', percent); //可配合 layui 进度条元素使用
+
+				//以下系 layui 2.5.6 新增
+				console.log(elem); //得到当前触发的元素 DOM 对象。可通过该元素定义的属性值匹配到对应的进度条。
+			}
+			,done: function(res){
+				if(res.code == 200){
+					layer.confirm('全部数据导入成功。'+res.data, function(index){
+						tableIns.reload();
+						layer.close(index);
+					});
+
+				}
+				if(res.code == 500){
+					layer.confirm('数据并未全部导入。'+res.data, function(index){
+						tableIns.reload();
+						layer.close(index);
+					});
+
+				}
+			}
+			,error: function(){
+				//请求异常回调
+				layer.msg("导入文件异常");
+			}
+		});
 
 		laydate.render({
 			elem: '#updateTime'//指定元素
