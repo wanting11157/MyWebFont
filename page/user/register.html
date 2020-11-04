@@ -97,6 +97,15 @@
 			</div>
 		</div>
 
+		<br>
+		<div class="layui-form-item">
+			<label class="layui-form-label">个人详情</label>
+			<div class="layui-input-block">
+				<textarea id="fuwenben" name="details">
+				</textarea>
+<!--				<textarea id="fuwenben" style="display: none;"></textarea>-->
+			</div>
+		</div>
 
 
       <br>
@@ -112,8 +121,6 @@
 	</form>
 	 
 	 </div>
-
-
 	 
 	 
 	<script src="../../iframe/dist/layui.all.js"></script>
@@ -136,12 +143,21 @@
 			}
 		}
 	//Demo
-	layui.use(['form','jquery','upload','element'], function(){
+	layui.use(['form','jquery','upload','element','layedit'], function(){
 		
 	  var form = layui.form;
 	  var $ = layui.jquery;
 	  var upload = layui.upload;
 	  var element = layui.element;
+	  var layedit = layui.layedit;
+		layedit.set({
+			uploadImage: {
+				url: '/api/user/fuwenben' //接口url
+				,type: 'post' //默认post
+			}
+		});
+		//构建一个默认的编辑器
+		var index = layedit.build('fuwenben');
 
 
 		form.on('checkbox(checkbox)', function(data){
@@ -224,8 +240,9 @@
 	  //监听提交
 
 	  form.on('submit(formDemo)', function(data){
-	    layer.msg(JSON.stringify(data.field));
-		
+	  	data.field.details=layedit.getContent(index).trim();
+	    console.log(data.field);
+
 		$.ajax({
 			url:'/api/user/add',
 			data:data.field,

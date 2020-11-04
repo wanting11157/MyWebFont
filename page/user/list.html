@@ -122,14 +122,26 @@
 
 
     <div class="layui-row">
-        <div class="layui-col-md2">
+        <div class="layui-hide">
             <button class="layui-btn layui-btn-primary" id="importExcel">导入Excel文件</button>
         </div>
-        <div class="layui-col-md10" align="center">
-            <div class="layui-progress layui-progress-big" lay-filter="demo" lay-showPercent="true" id="barId" style="display: none;">
+
+        <div class="layui-col-md1">
+
+        <label class="layui-form-label" style="display: none;" id="jingdutiao">导入Excel上传进度条</label>
+
+        </div>
+
+        <div class="layui-col-md11">
+
+            <div class="layui-progress layui-progress-big" lay-filter="demo" lay-showPercent="true" id="barId" style="display: none;" align="center">
                 <div class="layui-progress-bar" lay-percent="0%"></div>
             </div>
+
         </div>
+
+
+
     </div>
 
 <!--    <button class="layui-btn layui-btn-primary" id="exportExcel">导出为Excel文件</button>-->
@@ -144,6 +156,8 @@
         <a class="layui-btn  layui-btn-warm" lay-event="update">修改</a>
         <a class="layui-btn  layui-btn-danger" lay-event="del">删除</a>
         <a class="layui-btn layui-btn-primary" lay-event="exportExcel">导出为Excel文件</a>
+        <a class="layui-btn layui-btn-primary" lay-event="importExcel">导入Excel文件</a>
+
     </script>
     <!-- 行间的工具条模板 -->
 
@@ -187,6 +201,7 @@
             ,accept: 'file'
             ,progress: function(n, elem) {
                 document.getElementById('barId').style.display="";
+                document.getElementById('jingdutiao').style.display="";
                 var percent = n + '%' //获取进度百分比
                 element.progress('demo', percent); //可配合 layui 进度条元素使用
 
@@ -350,9 +365,14 @@
 		  }
 		  }
           if(data.event == 'exportExcel'){
-              let url = "/api/user/exportFile";
+              let url = "/api/user/exportExcel";
               //window.open(url,'download');
               window.open(url,'_blank');
+
+          }
+
+          if(data.event == 'importExcel'){
+              $("#importExcel").click();
 
           }
 
@@ -378,9 +398,9 @@
 	  let tableHead = [[ //标题栏
 	  			      // {checkbox: true}
                       {type:'checkbox', fixed: 'left'}
-	  			     ,{field: 'id', title: 'ID'}
-	  			     ,{field: 'name', title: '姓名'}
-                      ,{field: 'photo', title: '头像',templet:function(d){
+	  			     ,{field: 'id', title: 'ID',fixed: 'left'}
+	  			     ,{field: 'name', title: '姓名',fixed: 'left'}
+                      ,{field: 'myPhoto', title: '头像',templet:function(d){
                           return (!d.photo)?'<span style="color:red">无</span>':'有'
                        }}
                      ,{field: 'major', title: '专业',width:100}
@@ -391,6 +411,9 @@
 	  			     ,{field: 'updateTime', title: '更新时间',width:200}
 	  			     ,{field: 'createTime', title: '创建时间',width:200}
 	  			     ,{field: 'remark', title: '备注'}
+                     ,{field: 'detail', title: '个人详情',width:100,templet:function(d){
+                         return (!d.details)?'<span style="color:red">无</span>':'有'
+                      }}
 	  			      ,{field: '', title: '操作',fixed: 'right',width:150,toolbar:'#barUpdateDele'}
 	  			    ]];
 					
@@ -401,7 +424,7 @@
 	 	elem:'#user',
 	 	cols:  tableHead,
 		url:'/api/user/search'
-         ,cellMinWidth: 80
+         ,cellMinWidth: 100
 	 	,toolbar: '#allBar' //开启头部工具栏，并为其绑定左侧模板
 	     ,defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
 	 		title: '提示'

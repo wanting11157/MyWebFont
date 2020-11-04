@@ -107,7 +107,16 @@
 			</div>
 		</div>
 
+		<br>
+		<div class="layui-form-item">
+			<label class="layui-form-label">个人详情</label>
+			<div class="layui-input-block">
+				<textarea id="fuwenben" name="details">
 
+				</textarea>
+				<!--				<textarea id="fuwenben" style="display: none;"></textarea>-->
+			</div>
+		</div>
 
 		<br>
 	  <div class="layui-form-item">
@@ -153,12 +162,20 @@
 		}
 	}
 	//Demo
-	layui.use(['form','jquery','upload','element'], function(){
+	layui.use(['form','jquery','upload','element','layedit'], function(){
 
 	  	var form = layui.form;
 	  	var $ = layui.jquery;
 		var upload = layui.upload;
 		var element = layui.element;
+		var layedit = layui.layedit;
+		layedit.set({
+			uploadImage: {
+				url: '/api/user/fuwenben' //接口url
+				,type: 'post' //默认post
+			}
+		});
+		let fuwenbenIndex = 0;
 
 		form.on('checkbox(checkbox)', function(data){
 			if(data.elem.checked==true){
@@ -257,6 +274,9 @@
 				var user = res.data;
 	  			//给表单赋值
 	  			form.val("userFilter", user);
+				//构建一个默认的编辑器
+				console.log(user.details);
+				fuwenbenIndex = layedit.build('fuwenben');
 	  		}else{
 	  			layer.msg("显示用户信息失败");
 	  		}
@@ -271,6 +291,7 @@
 	  
 	  //监听提交
 	  form.on('submit(formDemo)', function(data){
+	  	data.field.details=layedit.getContent(fuwenbenIndex).trim();
 	    layer.msg(JSON.stringify(data.field));
 		
 		$.ajax({
@@ -283,7 +304,7 @@
 					layer.msg("更新成功");
 					//当你在iframe页面关闭自身时
 					var index = parent.layer.getFrameIndex(window.name)
-					 
+
 					console.log("index:"+index);//先得到当前iframe层的索引
 					parent.layer.close(index); //再执行关闭
 				}else{

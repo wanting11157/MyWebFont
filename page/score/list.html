@@ -99,13 +99,22 @@
 	</div>
 
 	<div class="layui-row">
-		<div class="layui-col-md2">
+		<div class="layui-hide">
 			<button class="layui-btn layui-btn-primary" id="importExcel">导入Excel文件</button>
 		</div>
-		<div class="layui-col-md10" align="center">
-			<div class="layui-progress layui-progress-big" lay-filter="demo" lay-showPercent="true" id="barId" style="display: none;">
+
+		<div class="layui-col-md1">
+
+			<label class="layui-form-label" style="display: none;" id="jingdutiao">导入Excel上传进度条</label>
+
+		</div>
+
+		<div class="layui-col-md11">
+
+			<div class="layui-progress layui-progress-big" lay-filter="demo" lay-showPercent="true" id="barId" style="display: none;" align="center">
 				<div class="layui-progress-bar" lay-percent="0%"></div>
 			</div>
+
 		</div>
 	</div>
 	 
@@ -126,6 +135,8 @@
 		   <a class="layui-btn " lay-event="add">新增</a>
 		   <a class="layui-btn  layui-btn-warm" lay-event="update">修改</a>
 		   <a class="layui-btn  layui-btn-danger" lay-event="del">删除</a>
+		   <a class="layui-btn layui-btn-primary" lay-event="exportExcel">导出为Excel文件</a>
+		   <a class="layui-btn layui-btn-primary" lay-event="importExcel">导入Excel文件</a>
 
 	   </script>
 	    <!-- 行间的工具条模板 -->
