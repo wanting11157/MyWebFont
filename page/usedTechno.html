@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>使用的技术</title>
+    <!-- 外部样式表 -->
+    <link rel="stylesheet" href="../../iframe/dist/css/layui.css" media="all"/>
+
+</head>
+<body>
+<ul class="layui-nav" lay-filter="">
+    <li class="layui-nav-item"><a href='./user/list.html'>用户管理</a></li>
+    <li class="layui-nav-item"><a href='./course/list.html'>课程管理</a></li>
+    <li class="layui-nav-item"><a href='./score/list.html'>成绩管理</a></li>
+    <li class="layui-nav-item">
+        <a href="javascript:;">解决方案</a>
+        <dl class="layui-nav-child"> <!-- 二级菜单 -->
+            <dd><a href="">移动模块</a></dd>
+            <dd><a href="">后台模版</a></dd>
+            <dd><a href="">电商平台</a></dd>
+        </dl>
+    </li>
+    <li class="layui-nav-item"><a href="">帮助</a></li>
+    <li class="layui-nav-item"><a href="">总结</a></li>
+</ul>
+
+<div style="padding:0px 30px 0px 30px">
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+    <legend>总结</legend>
+</fieldset>
+
+<form class="layui-form" action="" lay-filter="userFilter"  onsubmit="return false">
+    <textarea class="layui-textarea" id="LAY_demo1" style="display: none">
+    </textarea>
+    <br>
+    <button class="layui-btn layui-btn-warm" lay-submit lay-filter="tijiao" >提交</button>
+</form>
+</div>
+
+<script src="../../iframe/dist/layui.all.js"></script>
+<script>
+
+    layui.use(['layedit','jquery','form'], function() {
+        var layedit = layui.layedit;
+        var $ = layui.jquery;
+        var form = layui.form;
+
+        layedit.set({
+            uploadImage: {
+                url: '/api/user/fuwenben' //接口url
+                ,type: 'post' //默认post
+            },
+            height: 800
+        });
+
+        //构建一个默认的编辑器
+        let index;
+
+        $.ajax({
+            url:'/api/tech/show',
+            success:function(res){
+                console.log(JSON.stringify(res));
+
+
+                // res = ResponseResult
+                if(res && res.code == 404){
+                    index = layedit.build('LAY_demo1');
+                    layer.msg("富文本里没显示内容的原因：没有保存有或读取失败");
+
+                }else{
+                    $("#LAY_demo1").val(res.data);
+                    index = layedit.build('LAY_demo1');
+                    layer.msg("显示富文本内容成功");
+                }
+
+            },
+            error:function(){
+
+                layer.msg("显示富文本内容异常");
+            }
+        })
+
+        form.on('submit(tijiao)', function(data){
+            $.ajax({
+                url:'/api/tech/save',
+                //data:JSON.stringify( submitData),
+                data: {content:layedit.getContent(index)},
+                type:'POST',
+                //dataType: 'json',
+                //contentType: 'application/json',
+                success:function(res){
+                    if(res && res.code == 500){
+                        console.log("保存失败");
+                        layer.msg("保存失败");
+
+                    }else{
+                        console.log("保存成功");
+                        layer.msg("保存成功");
+                    }
+                },
+                error:function(){
+                    console.log("保存异常");
+                    layer.msg("保存异常");
+
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -21,6 +21,7 @@
 			</dl>
 		</li>
 		<li class="layui-nav-item"><a href="">帮助</a></li>
+		<li class="layui-nav-item"><a href="../usedTechno.html"总结</a></li>
 	</ul>
 	<div class="layui-card">
 		<div class="layui-card-header">成绩管理</div>
@@ -176,6 +177,7 @@
 			,accept: 'file'
 			,progress: function(n, elem) {
 				document.getElementById('barId').style.display="";
+				document.getElementById('jingdutiao').style.display="";
 				var percent = n + '%' //获取进度百分比
 				element.progress('demo', percent); //可配合 layui 进度条元素使用
 
@@ -301,7 +303,7 @@
 				  //<div id="tong" class="hide" style="width: 670px;height: 320px;display: none;">
 			  });
 		  }
-		  if(data.event == 'update'){
+		  else if(data.event == 'update'){
 			   if(checkStatus.data.length === 0) {
 			         layer.msg('请选择一行');
 			   } else if(checkStatus.data.length > 1) {
@@ -323,7 +325,7 @@
 			   }
 			 
 		  }
-		  if(data.event == 'del'){
+		  else if(data.event == 'del'){
 				if(checkStatus.data.length === 0) {
 				      layer.msg('请选择一行',{time:2000});
 				}else{
@@ -346,17 +348,28 @@
 
 		  }
 		  }
+		  else if(data.event == 'exportExcel'){
+			  let url = "/api/score/exportExcel";
+			  //window.open(url,'download');
+			  window.open(url,'_blank');
+
+		  }
+
+		  else if(data.event == 'importExcel'){
+			  $("#importExcel").click();
+
+		  }
 	  });
 
 	  let tableHead = [[ //标题栏
 	  			      {checkbox: true}
 	  			    ,{field: 'id', title: 'ID', width: 80}
+		            ,{field: 'studentName', title: '学生姓名', width: 120}
+		            ,{field: 'score', title: '成绩', width: 120}
 		            ,{field: 'courseName', title: '课程名', width: 120}
 		            ,{field: 'teacherName', title: '教师名', width: 120}
-	  			    ,{field: 'score', title: '成绩', width: 120}
-		            ,{field: 'studentName', title: '学生姓名', width: 120}
-	  			    ,{field: 'updateTime', title: '更新时间', width: 180}
-	  			    ,{field: 'createTime', title: '创建时间', width: 180}
+		            ,{field: 'createTime', title: '创建时间', width: 180}
+		            ,{field: 'updateTime', title: '更新时间', width: 180}
 	  			    ,{field: 'remark', title: '备份', width: 120}
 	  			      ,{field: '', title: '操作',toolbar:'#barUpdateDele'}
 	  			    ]];
