@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:position="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <title>使用的技术</title>
@@ -33,7 +33,12 @@
 <!--        常规布局（以中型屏幕桌面为例）：-->
         <div class="layui-row">
             <div class="layui-col-md2">
-                <div id="MyTree" class="demo-tree demo-tree-box" style="width: 200px; height: 300px; overflow: scroll;"></div>
+
+
+                <div id="MyTree" style="width: 200px; height: 100%;"></div>
+
+
+<!--                <a class="layui-btn"><i class="layui-icon layui-icon-addition"></i></a>-->
             </div>
             <div class="layui-col-md10">
                 <form class="layui-form" action="" lay-filter="userFilter"  onsubmit="return false">
@@ -53,8 +58,10 @@
                 </form>
             </div>
         </div>
-
 </div>
+<button type="button" class="layui-btn layui-btn-primary" style="position:absolute;bottom:0px;left:0px;" id="genAdd">
+<i class="layui-icon">&#xe654;</i>
+</button>
 
 <script src="../../iframe/dist/layui.all.js"></script>
 <script>
@@ -68,6 +75,35 @@
         let index;
         index = layedit.build('LAY_demo1');
 
+        layedit.set({
+                uploadImage: {
+                    url: '/api/know/fuwenben' //接口url
+                    ,type: 'post' //默认post
+                }
+                // height: 800
+            });
+
+        $("#genAdd").click(function(){
+            $.ajax({
+                url:'/api/know/genAdd',
+                type:'POST',
+                success:function(res){
+                    // layer.msg(res);
+                    if(res && res.code == 500){
+                        layer.msg("增加根节点失败");
+
+
+                    }else{
+                        loadData();
+                        layer.msg("增加根节点成功");
+                    }
+
+                },
+                error:function(){
+                    layer.msg("增加根节点异常");
+                }
+            })
+        });
         form.on('submit(tijiao)', function(data){
             data.field.content=layedit.getContent(index).trim();
             $.ajax({
@@ -273,13 +309,6 @@
         //     }
         // });
 
-        // layedit.set({
-        //     uploadImage: {
-        //         url: '/api/user/fuwenben' //接口url
-        //         ,type: 'post' //默认post
-        //     },
-        //     height: 800
-        // });
         //
         // //构建一个默认的编辑器
         // let index;
