@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>使用的技术</title>
+    <!-- 外部样式表 -->
+    <link rel="stylesheet" href="../../iframe/dist/css/layui.css" media="all"/>
+
+</head>
+<body>
+<ul class="layui-nav" lay-filter="">
+    <li class="layui-nav-item"><a href='../user/list.html'>用户管理</a></li>
+    <li class="layui-nav-item"><a href='../course/list.html'>课程管理</a></li>
+    <li class="layui-nav-item"><a href='../score/list.html'>成绩管理</a></li>
+    <li class="layui-nav-item">
+        <a href="javascript:;">解决方案</a>
+        <dl class="layui-nav-child"> <!-- 二级菜单 -->
+            <dd><a href="">移动模块</a></dd>
+            <dd><a href="">后台模版</a></dd>
+            <dd><a href="">电商平台</a></dd>
+        </dl>
+    </li>
+    <li class="layui-nav-item"><a href="">帮助</a></li>
+    <li class="layui-nav-item"><a href="">总结</a></li>
+</ul>
+
+<div style="padding:0px 30px 0px 30px">
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+    <legend>总结</legend>
+</fieldset>
+
+<!--    <div class="layui-container">-->
+<!--        常规布局（以中型屏幕桌面为例）：-->
+        <div class="layui-row">
+            <div class="layui-col-md2">
+                <div id="MyTree" class="demo-tree demo-tree-box" style="width: 200px; height: 300px; overflow: scroll;"></div>
+            </div>
+            <div class="layui-col-md10">
+                <form class="layui-form" action="" lay-filter="userFilter"  onsubmit="return false">
+<!--                    <div class="layui-form-item">-->
+<!--                        <label class="layui-form-label">标题</label>-->
+<!--                        <div class="layui-input-block">-->
+                    <input type="text" name="id" required  class="layui-input layui-hide">
+                    <div style="padding-bottom: 30px;">
+                    <input type="text" name="head" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+                    </div>
+<!--                        </div>-->
+<!--                    </div>-->
+                    <textarea class="layui-textarea" id="LAY_demo1" name="content" style="display: none">
+                    </textarea>
+                    <br>
+                    <button class="layui-btn layui-btn-warm" lay-submit lay-filter="tijiao" >提交</button>
+                </form>
+            </div>
+        </div>
+
+</div>
+
+<script src="../../iframe/dist/layui.all.js"></script>
+<script>
+
+    layui.use(['layedit','jquery','form','tree'], function() {
+        var layedit = layui.layedit;
+        var $ = layui.jquery;
+        var form = layui.form;
+        var tree = layui.tree;
+        var layer = layui.layer;
+        let index;
+        index = layedit.build('LAY_demo1');
+
+        form.on('submit(tijiao)', function(data){
+            data.field.content=layedit.getContent(index).trim();
+            $.ajax({
+                url:'/api/know/submit',
+                data:data.field,
+                type:'POST',
+                success:function(res){
+                    // layer.msg(res);
+                    if(res && res.code == 500){
+                        layer.msg("提交失败");
+
+
+                    }else{
+                        layer.msg("提交成功");
+                        loadData();
+                    }
+
+                },
+                error:function(){
+                    layer.msg("提交异常");
+                }
+            })
+
+        });
+
+        loadData();
+
+        function loadData(){
+
+            $.ajax({
+                url:'/api/know/start',
+                success:function(res){
+                    if(res && res.code == 404){
+                        layer.msg("加载树数据失败或数据库没有数据");
+                    }else{
+                        //把data 转成树结构
+                         let treeData = covertData2Tree(res.data,0);
+                         renderTree(treeData);
+                    }
+                },
+                error:function(){
+                    layer.msg('加载树数据异常');
+                }
+            });
+        }
+
+        function covertData2Tree(listData,parentId){
+            let treeList = [];
+            if(listData.length>0){
+                for(let key in listData){
+                    let item = listData[key];
+                    if(parentId == item.parentId){
+                        //listData.splice(key,1);  //为了速度（性能），从原数组中删除掉已经找到过的元素
+                        let children = covertData2Tree(listData,item.id);
+                        if(children.length>0){
+                            item.children = children;
+                        }
+                        treeList.push(item);
+                    }
+                }
+            }
+            return treeList;
+        }
+
+        // 显示（渲染）树结构DOM
+        function renderTree(data) {
+            //渲染
+            var inst1 = tree.render({
+                elem: '#MyTree'  //绑定元素
+                ,data: data
+                ,id: 'demoId'
+                ,edit: ['add', 'update', 'del'] //操作节点的图标
+                ,click: function(obj){
+                    $("input[name='id']").val(obj.data.id);
+                    $("input[name='head']").val(obj.data.head);
+                    $("#LAY_demo1").val(obj.data.content);
+                    index = layedit.build('LAY_demo1');
+                    // console.log(obj.data); //得到当前点击的节点数据
+                    // console.log(obj.state); //得到当前节点的展开状态：open、close、normal
+                    // console.log(obj.elem); //得到当前节点元素
+                    //
+                    // console.log(obj.data.children); //当前节点下是否有子节点
+                }
+                ,operate: function(obj){
+                    var type = obj.type; //得到操作类型：add、edit、del
+                    var data = obj.data; //得到当前节点的数据
+                    var elem = obj.elem; //得到当前节点元素
+
+                    console.log("type："+JSON.stringify(type));
+                    console.log("data："+JSON.stringify(data));
+                    console.log("elem："+JSON.stringify(elem));
+
+                    //Ajax 操作
+                    var id = data.id; //得到节点索引
+                    if(type === 'add'){ //增加节点
+                        add(id);
+
+                    } else if(type === 'update'){ //修改节点
+
+                        // console.log("修改："+data.title);
+                        update(data);
+
+
+                    } else if(type === 'del'){ //删除节点
+                        del(data.id)
+
+                    }
+                }
+            });
+        }
+
+
+        function add(parentId){
+            //layer.msg(parentId)
+            $.ajax({
+                url:'/api/know/add',
+                data:{parentId:parentId},
+                success:function(res){
+                    if(res && res.code == 200){
+                        loadData();
+                        layer.msg("增加节点成功")
+
+                    }else{
+                        loadData();
+                        layer.msg("增加节点失败")
+                    }
+                },
+                error:function(){
+                    loadData();
+                    layer.msg('增加节点异常');
+                }
+            });
+        }
+
+        // {id   parentId  title describe content }
+        function update(data){
+            $.ajax({
+                url:'/api/know/update',
+                data:data,
+                success:function(res){
+                    if(res && res.code == 500){
+                        layer.msg("修改失败")
+
+                    }else{
+                        layer.msg("修改成功")
+                        loadData();
+                    }
+                },
+                error:function(){
+                    layer.msg('修改异常');
+                }
+            });
+
+
+        }
+
+        function del(id){
+            $.ajax({
+                url:'/api/know/del',
+                data: {id:id},
+                success:function(res){
+                    if(res && res.code == 500){
+                        loadData();
+                        layer.msg("删除失败")
+
+                    }else{
+                        loadData();
+                        layer.msg("删除成功")
+
+                    }
+                },
+                error:function(){
+                    loadData();
+                    layer.msg('删除异常');
+                }
+            });
+        }
+
+        // //开启节点操作图标
+        // tree.render({
+        //     elem: '#test9'
+        //     ,data: data1
+        //     ,edit: ['add', 'update', 'del'] //操作节点的图标
+        //     ,click: function(obj){
+        //         layer.msg(JSON.stringify(obj.data));
+        //     }
+        //
+        //     ,operate: function(obj){
+        //         var type = obj.type; //得到操作类型：add、edit、del
+        //         var data = obj.data; //得到当前节点的数据
+        //         var elem = obj.elem; //得到当前节点元素
+        //
+        //         //Ajax 操作
+        //         var id = data.id; //得到节点索引
+        //         if(type === 'add'){ //增加节点
+        //             //返回 key 值
+        //             return 123;
+        //         } else if(type === 'update'){ //修改节点
+        //             console.log(elem.find('.layui-tree-txt').html()); //得到修改后的内容
+        //         } else if(type === 'del'){ //删除节点
+        //
+        //         };
+        //     }
+        // });
+
+        // layedit.set({
+        //     uploadImage: {
+        //         url: '/api/user/fuwenben' //接口url
+        //         ,type: 'post' //默认post
+        //     },
+        //     height: 800
+        // });
+        //
+        // //构建一个默认的编辑器
+        // let index;
+        //
+        // $.ajax({
+        //     url:'/api/tech/show',
+        //     success:function(res){
+        //         console.log(JSON.stringify(res));
+        //
+        //
+        //         // res = ResponseResult
+        //         if(res && res.code == 404){
+        //             index = layedit.build('LAY_demo1');
+        //             layer.msg("富文本里没显示内容的原因：没有保存有或读取失败");
+        //
+        //         }else{
+        //             $("#LAY_demo1").val(res.data);
+        //             index = layedit.build('LAY_demo1');
+        //             layer.msg("显示富文本内容成功");
+        //         }
+        //
+        //     },
+        //     error:function(){
+        //
+        //         layer.msg("显示富文本内容异常");
+        //     }
+        // })
+        //
+        //
+    });
+</script>
+</body>
+</html>

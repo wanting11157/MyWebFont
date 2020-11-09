@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="../../iframe/dist/css/layui.css"  media="all">
+  <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+
+
+<div id="tree1"></div>
+
+
+<script src="../../iframe/dist/layui.all.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+//style="width: 200px; height: 300px; overflow: scroll;"
+
+
+layui.use(['tree'], function(){
+	var tree = layui.tree;
+	
+	// (后台）取数据 
+	
+	let data = [{
+        title: '江西' //一级菜单
+        ,children: [{
+          title: '南昌' //二级菜单
+          ,children: [{
+            title: '高新区' //三级菜单
+            //…… //以此类推，可无限层级
+          }]
+        }]
+      },{
+		id:2
+		,parentId:0
+        ,title: '陕西' //一级菜单
+		,content:'fioewafweamfpjewafewafewamfpewjafowaemfpawejfewajfae'
+        ,children: [{
+          title: '西安' //二级菜单
+        }]
+      }];
+	
+	
+	//loadData();
+	renderTree(data);
+	
+	
+	
+	function loadData(){
+	
+		let url = '';
+		
+		$.ajax({
+			url:url,
+			//data:'',
+			success:function(res){
+				if(res && res.code == 200){
+				
+					//把data 转成树结构
+					let treeData = covertData2Tree(res.data);
+				
+				
+					renderTree(treeData);
+				}else{
+					layer.msg("加载树数据失败" + res.msg);
+				}
+			},
+			error:function(){
+				layer.msg('加载树数据异常');
+			}
+			
+		});
+	
+	}
+	
+	
+	// 显示（渲染）树结构DOM
+	function renderTree(data) {
+		//渲染
+		var inst1 = tree.render({
+		  elem: '#tree1'  //绑定元素
+		  ,data: data
+		  ,edit: ['add', 'update', 'del'] //操作节点的图标
+		  ,click: function(obj){
+			  layer.msg(JSON.stringify(obj.data));
+		  } 4
+		  
+		  ,operate: function(obj){
+			var type = obj.type; //得到操作类型：add、edit、del
+			var data = obj.data; //得到当前节点的数据
+			var elem = obj.elem; //得到当前节点元素
+			
+			
+			
+			
+			layer.msg(type);
+			console.log(JSON.stringify(data));
+			
+			
+			//Ajax 操作
+			var id = data.id; //得到节点索引
+			if(type === 'add'){ //增加节点
+				add(data.id);
+			
+			} else if(type === 'update'){ //修改节点
+			
+				update(data);
+			  
+			  
+			} else if(type === 'del'){ //删除节点
+			
+				del(data.id);
+			
+			  
+			};
+		 }
+	
+		});
+
+	}
+	
+	
+	function add(parentId){
+		layer.msg(parentId)
+	}
+	
+	// {id   parentId  title describe content }
+	function update(item){
+		layer.msg(JSON.stringify(item));
+		
+		let describe = '';
+		let content = '';
+		
+		item.describe = describe;
+		item.content = content;
+		
+		
+	}
+	
+	function del(id){
+		layer.msg(id);
+	}
+	
+	// 集合（数组）转成树结构
+	/* listData = 
+	[
+		{
+			id: 1,
+			parentId: 0
+			children:[
+				{
+					id: 3,
+					parentId: 1
+				},
+				
+			]
+		}, 
+		{
+			id: 2,
+			parentId: 0
+		}, 
+		{
+			id: 3,
+			parentId: 1
+		}, 
+		{
+			id: 4,
+			parentId: 2
+		}, 
+	]
+	*/
+	/* return = 
+	[
+		{
+			id: 1,
+			parentId: 0,
+			children: [
+				{
+					id: 3,
+					parentId: 1
+					children: [
+						{
+							id: 33,
+							parentId: 3
+							children: [
+								{
+									id: 333,
+									parentId: 33
+								}
+							]
+						}
+					]
+				}
+			]
+		}, 
+		{
+			id: 2,
+			parentId: 0,
+			children: [
+				{
+					id: 4,
+					parentId: 2
+				}
+			]
+		}
+	]
+	*/
+	
+	function covertData2Tree(listData,parentId){
+		let treeList = [];
+		if(listData.length>0){
+			for(let key in listData){
+				let item = listData[key];
+				if(parentId == item.parentId){
+					//listData.splice(key,1);  为了速度（性能），从原数组中删除掉已经找到过的元素
+					let children = covertData2Tree(listData,item.id);
+					if(children.length>0){
+						item.children = children;
+					}
+					treeList.push(item);				
+				}
+			}
+		}
+		return treeList;
+	}
+	
+	
+	
+
+});
+
+</script>
+
+</body>
+</html>
