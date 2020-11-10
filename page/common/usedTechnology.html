@@ -71,7 +71,7 @@
         var $ = layui.jquery;
         var form = layui.form;
         var tree = layui.tree;
-        var layer = layui.layer;
+        // var layer = layui.layer;
         let index;
         index = layedit.build('LAY_demo1');
 
@@ -208,7 +208,22 @@
 
 
                     } else if(type === 'del'){ //删除节点
-                        del(data.id)
+                        let shuzu = [];
+
+                        digui(data);
+                        function digui(data){
+                            if(!data.children){
+                                shuzu.push(data.id);
+                            }else{
+                                shuzu.push(data.id);
+                                data=data.children;
+                                for(let key in data){
+                                    digui(data[key]);
+                                }
+                            }
+                        }
+
+                        del(shuzu);
 
                     }
                 }
@@ -260,18 +275,19 @@
 
         }
 
-        function del(id){
+        function del(shuzu){
             $.ajax({
-                url:'/api/know/del',
-                data: {id:id},
+                url:'/api/know/dels',
+                data: {ids:shuzu},
                 success:function(res){
                     if(res && res.code == 500){
                         loadData();
-                        layer.msg("删除失败")
+                        layer.msg(res.msg);
 
                     }else{
                         loadData();
-                        layer.msg("删除成功")
+                        layer.msg('删除成功');
+
 
                     }
                 },
