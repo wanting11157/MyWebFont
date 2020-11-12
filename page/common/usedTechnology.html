@@ -33,31 +33,31 @@
         <!-- 常规布局（以中型屏幕桌面为例）：-->
         <div class="layui-row">
             <!-- 右边列  -->
-            <div class="layui-col-md4 layui-col-xs6">
+            <div class="layui-col-md3">
                 <!-- 树内容-->
                 <div id="MyTree" ></div>
             </div>
             <!-- 左边列  -->
-            <div class="layui-col-md8  layui-col-xs6">
-                <form  class="layui-form" action="" lay-filter="userFilter"  onsubmit="return false" style="position: fixed;top: 160px;">
+            <div class="layui-col-md9">
+                <form  class="layui-form" action="" lay-filter="userFilter"  onsubmit="return false" style="position: fixed;width: 100%;">
                     <input type="text" name="id" required  class="layui-input layui-hide">
                     <div class="layui-form-item">
                         <!-- <label class="layui-form-label">输入框</label>-->
-                        <div class="layui-input-inline" style="width: 100%;">
+<!--                        <div class="layui-input-inline">-->
                             <input type="text" name="head" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
-                        </div>
+<!--                        </div>-->
                     </div>
                     <div class="layui-form-item layui-form-text">
                         <!--  <label class="layui-form-label">文本域</label>-->
-                        <div class="layui-input-inline" style="width: 100%;">
+<!--                        <div class="layui-input-inline" >-->
                             <textarea class="layui-textarea" id="LAY_demo1" name="content" ></textarea>
-                        </div>
+<!--                        </div>-->
                     </div>
 
                     <div class="layui-form-item">
-                        <div class="layui-input-block">
+<!--                        <div class="layui-input-block">-->
                             <button class="layui-btn layui-btn-warm" lay-submit lay-filter="tijiao" >提交</button>
-                        </div>
+<!--                        </div>-->
                     </div>
                 </form>
             </div>
@@ -212,6 +212,8 @@
                     if(type === 'add'){ //增加节点
                         add(id);
 
+
+
                     } else if(type === 'update'){ //修改节点
 
                         // console.log("修改："+data.title);
@@ -241,9 +243,7 @@
             });
         }
 
-
         function add(parentId){
-            //layer.msg(parentId)
             $.ajax({
                 url:'/api/know/add',
                 data:{parentId:parentId},
@@ -251,6 +251,7 @@
                     if(res && res.code == 200){
                         loadData();
                         layer.msg("增加节点成功")
+
 
                     }else{
                         loadData();
@@ -262,7 +263,10 @@
                     layer.msg('增加节点异常');
                 }
             });
+
+
         }
+
 
         // {id   parentId  title describe content }
         function update(data){
