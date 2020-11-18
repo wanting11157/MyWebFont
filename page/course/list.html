@@ -343,15 +343,15 @@
 
 	  let tableHead = [[ //标题栏
 	  			      {checkbox: true}
-	  			     ,{field: 'id', title: 'ID', width: '5%'}
-	  			     ,{field: 'name', title: '课程名', width: '8%'}
-	  			     ,{field: 'teacherName', title: '教师姓名', width: '8%'}
-	  			     ,{field: 'college', title: '院系', width: '8%'}
-	  			     ,{field: 'team', title: '学期', width: '8%'}
-	  			     ,{field: 'updateTime', title: '更新时间', width: '14%'}
-	  			     ,{field: 'createTime', title: '创建时间', width: '14%'}
-	  			     ,{field: 'remark', title: '备份', width: '8%'}
-	  			      ,{field: '', title: '操作',toolbar:'#barUpdateDele'}
+	  			     ,{field: 'id', title: 'ID', width: 80}
+	  			     ,{field: 'name', title: '课程名', width: 250}
+	  			     ,{field: 'teacherName', title: '教师姓名', width: 150}
+	  			     ,{field: 'college', title: '院系', width: 100}
+	  			     ,{field: 'team', title: '学期', width: 100}
+	  			     ,{field: 'updateTime', title: '更新时间', width: 200}
+	  			     ,{field: 'createTime', title: '创建时间', width: 200}
+	  			     ,{field: 'remark', title: '备份', width: 150}
+	  			      ,{field: '', fixed: 'right',title: '操作',toolbar:'#barUpdateDele'}
 	  			    ]];
 	 
 	 
@@ -359,6 +359,7 @@
 		 id:"courseTableId",
 	 	elem:'#user',
 	 	cols:  tableHead,
+		 cellMinWidth:80,
 		url:'/api/course/search',
 	 	toolbar: '#allBar' //开启头部工具栏，并为其绑定左侧模板
 	     ,defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
