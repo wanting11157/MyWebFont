@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:position="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>使用的技术</title>
+    <!-- 外部样式表 -->
+    <link rel="stylesheet" href="../../iframe/dist/css/layui.css" media="all"/>
+
+</head>
+<body>
+<ul class="layui-nav" lay-filter="">
+    <li class="layui-nav-item"><a href='../user/list.html'>用户管理</a></li>
+    <li class="layui-nav-item"><a href='../course/list.html'>课程管理</a></li>
+    <li class="layui-nav-item"><a href='../score/list.html'>成绩管理</a></li>
+    <li class="layui-nav-item">
+        <a href="javascript:;">解决方案</a>
+        <dl class="layui-nav-child"> <!-- 二级菜单 -->
+            <dd><a href="">移动模块</a></dd>
+            <dd><a href="">后台模版</a></dd>
+            <dd><a href="">电商平台</a></dd>
+        </dl>
+    </li>
+    <li class="layui-nav-item"><a href=''>作者介绍</a></li>
+    <li class="layui-nav-item"><a href="../common/usedTechnology.html">知识点总结</a></li>
+</ul>
+
+<div style="padding:0px 30px 0px 30px">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+        <legend>作者</legend>
+    </fieldset>
+
+<!--    <div style="width: 80%;margin-left: auto;margin-right: auto;margin-top: 50px;">-->
+
+        <form class="layui-form" action="" lay-filter="userFilter"  onsubmit="return false">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-block" style="width: 300px;">
+                    <input type="text" name="name" required  placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">专业</label>
+                <div class="layui-input-block" style="width: 300px;">
+                    <input type="text" name="major" required  placeholder="请输入专业" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">小学</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="xiaoxue" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">初中</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="chuzhong" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">高中</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="gaozhong" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">大学</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="daxue" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">家庭地址</label>
+                <div class="layui-input-block" style="width: 300px;">
+                    <input type="text" name="home" required  autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">出生年月</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" id="born" name="born" placeholder="请输入出生年月">
+                </div>
+            </div>
+
+
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">现状</label>
+                <div class="layui-input-block">
+                    <textarea name="xianzhuang" id="xianzhuang" class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">希望自己可以</label>
+                <div class="layui-input-block">
+                    <textarea name="hope" id="hope" class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">想说的话</label>
+                <div class="layui-input-block">
+                    <textarea name="want" id="want" class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <br>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formDemo">我已经弄好了</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+
+
+        </form>
+
+    </div>
+
+    <script src="../../iframe/dist/layui.all.js"></script>
+ <script>
+
+
+    layui.use(['form','jquery','layedit','laydate'], function(){
+
+        var form = layui.form;
+        var $ = layui.jquery;
+        var layedit = layui.layedit;
+        var laydate = layui.laydate;
+
+        var xian = 0;
+        var hope = 0;
+        var want = 0;
+
+        laydate.render({
+            elem: '#born' //指定元素
+        });
+
+        $.ajax({
+            url:'/api/writer/show',
+            type:'POST',
+            success:function(res){
+
+                if(res && res.code == 200){
+                    layer.msg("显示我的信息成功");
+                    var my = res.data;
+                    //给表单赋值
+                    form.val("userFilter",my);
+                    //构建一个默认的编辑器
+
+                    xian = layedit.build('xianzhuang');
+                    hope = layedit.build('hope');
+                    want = layedit.build('want');
+                }else{
+                    layer.msg("显示我的信息失败");
+                }
+
+            },
+            error:function(){
+
+                layer.msg("显示我的信息异常");
+            }
+        })
+        //监听提交
+
+        form.on('submit(formDemo)', function(data){
+            data.field.xianzhuang=layedit.getContent(xian).trim();
+            data.field.hope=layedit.getContent(hope).trim();
+            data.field.want=layedit.getContent(want).trim();
+
+
+            $.ajax({
+                url:'/api/writer/tijiao',
+                data:data.field,
+                type:'POST',
+                success:function(res){
+                    // layer.msg(res);
+                    if(res && res.code == 200){
+                        layer.msg("插入redis数据库成功");
+
+                    }else{
+                        layer.msg("插入redis数据库失败");
+                    }
+
+                },
+                error:function(){
+                    layer.msg("插入redis数据库异常");
+                }
+            })
+
+
+
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>

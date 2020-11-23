@@ -65,6 +65,7 @@
 						var user = res.data;
 		    			layer.msg(user+"登录成功");
 						console.log(user+"登录成功");
+						sessionStorage.setItem('username',user);
 		  				location.href = "./list.html"
 		    		}else{
 		    			layer.msg("登录失败");

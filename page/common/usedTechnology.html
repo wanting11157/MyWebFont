@@ -20,8 +20,8 @@
             <dd><a href="">电商平台</a></dd>
         </dl>
     </li>
-    <li class="layui-nav-item"><a href="">帮助</a></li>
-    <li class="layui-nav-item"><a href="">总结</a></li>
+    <li class="layui-nav-item"><a href='../writer_redis/writer.html'>作者介绍</a></li>
+    <li class="layui-nav-item"><a href="">知识点总结</a></li>
 </ul>
 
 <div style="padding:0px 30px 0px 30px">
@@ -29,7 +29,7 @@
         <legend>总结</legend>
     </fieldset>
 
-    <div class="layui-container">
+    <div class="layui-container" style="width: 85%">
         <!-- 常规布局（以中型屏幕桌面为例）：-->
         <div class="layui-row">
             <!-- 右边列  -->
@@ -39,7 +39,7 @@
             </div>
             <!-- 左边列  -->
             <div class="layui-col-md8">
-                <form  class="layui-form" action="" lay-filter="userFilter"  onsubmit="return false" style="position: fixed;width: 100%;">
+                <form  class="layui-form" action="" id="editForm" lay-filter="userFilter"  onsubmit="return false" style="position: fixed;">
                     <input type="text" name="id" required  class="layui-input layui-hide">
                     <div class="layui-form-item">
                         <!-- <label class="layui-form-label">输入框</label>-->
@@ -77,19 +77,32 @@
         var $ = layui.jquery;
         var form = layui.form;
         var tree = layui.tree;
-
+        let username = sessionStorage.getItem('username');
         let index;
-        index = layedit.build('LAY_demo1');
 
-        layedit.set({
+
+        let editLeft = window.innerWidth*0.85*(4/12)+window.innerWidth*0.15/2+15;
+        let editTop=145;
+        let formWidth = window.innerWidth*0.85*(8/12);
+
+        let editHeight = window.innerHeight-255-70;
+        $("#editForm").css({"top":editTop,"left":editLeft,"width":formWidth})
+
+        let options={
             uploadImage: {
                 url: '/api/know/fuwenben' //接口url
                 ,type: 'post' //默认post
-            }
-            // height: 800
-        });
+            },
+            height: editHeight
+        };
+        index = layedit.build('LAY_demo1',options);
 
         $("#genAdd").click(function(){
+
+            if(!username){
+                layer.msg('未登录，不可操作');
+                return false;
+            }
             $.ajax({
                 url:'/api/know/genAdd',
                 type:'POST',
